@@ -1,0 +1,34 @@
+{
+  "name": "plan2net/sierrha",
+  "description": "A 403 'forbidden' error handler for TYPO3 that redirects to a login URL.",
+  "type": "typo3-cms-extension",
+  "license": "GPL-2.0-or-later",
+  "keywords": [
+    "typo3",
+	"extension",
+	"site",
+	"page",
+	"error",
+	"handler",
+	"http",
+	"status",
+	"403",
+	"forbidden"
+  ],
+  "authors": [
+    {
+      "email": "office@plan2.net",
+      "homepage": "http://www.plan2.net"
+    }
+  ],
+  "require": {
+    "php": "^7.2",
+    "typo3/cms-backend": "^9.5",
+    "typo3/cms-frontend": "^9.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Plan2net\\Sierrha\\": "Classes/"
+    }
+  }
+}

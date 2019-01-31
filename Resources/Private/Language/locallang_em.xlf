@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+    <file source-language="en" datatype="plaintext" original="messages" product-name="sierrha">
+        <header/>
+        <body>
+            <trans-unit id="debugMode">
+                <source>Enable debug mode</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

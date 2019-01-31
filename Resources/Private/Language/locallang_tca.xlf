@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+    <file source-language="en" datatype="plaintext" original="messages" product-name="sierrha">
+        <header/>
+        <body>
+            <trans-unit id="site_errorhandling.tx_sierrha_loginPage">
+                <source>Login Page</source>
+            </trans-unit>
+            <trans-unit id="site_errorhandling.tx_sierrha_loginPage.placeholder">
+                <source>Internal page id or external URL</source>
+            </trans-unit>
+            <trans-unit id="site_errorhandling.tx_sierrha_loginPage.wizard_title">
+                <source>Login Page - Page or URL</source>
+            </trans-unit>
+            <trans-unit id="site_errorhandling.tx_sierrha_loginUrlParameter">
+                <source>Return Parameter for Login Page URL</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
