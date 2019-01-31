@@ -63,26 +63,26 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface {
 	 */
 	public function handlePageError(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface {
 		try {
-			if ($this->statusCode !== 403) {
-				throw new \InvalidArgumentException('StatusForbiddenHandler only handles status 403.', 1547651137);
-			}
-			if (empty($this->handlerConfiguration['tx_sierrha_loginPage'])) {
-				throw new \InvalidArgumentException('StatusForbiddenHandler needs to have a URL set.', 1547651257);
-			}
+            if ($this->statusCode !== 403) {
+                throw new \InvalidArgumentException('Sierrha-StatusForbiddenHandler only handles HTTP status 403.', 1547651137);
+            }
+            if (empty($this->handlerConfiguration['tx_sierrha_loginPage'])) {
+                throw new \InvalidArgumentException('Sierrha-StatusForbiddenHandler needs to have a login page URL set.', 1547651257);
+            }
 
-			// if the user is already logged in, another login with the same account will not resolve the issue
-			// NOTE: we're checking also for BE sessions in case a FE user group is simulated
-			$context = GeneralUtility::makeInstance(Context::class);
-			if ($context->getPropertyFromAspect('frontend.user', 'isLoggedIn')
-				|| ($context->getPropertyFromAspect('backend.user', 'isLoggedIn')
-					&& $context->getPropertyFromAspect('frontend.user', 'groupIds')[1] === -2 // special "any group" (simulated)
-				)) {
-				return GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
-					$request,
-					'The requested page was not accessible with provided credentials',
-					['code' => PageAccessFailureReasons::ACCESS_DENIED_GENERAL]
-				);
-			}
+            // if the user is already logged in, another login with the same account will not resolve the issue
+            // NOTE: we're checking also for BE sessions in case a FE user group is simulated
+            $context = GeneralUtility::makeInstance(Context::class);
+            if ($context->getPropertyFromAspect('frontend.user', 'isLoggedIn')
+                || ($context->getPropertyFromAspect('backend.user', 'isLoggedIn')
+                    && $context->getPropertyFromAspect('frontend.user', 'groupIds')[1] === -2 // special "any group" (simulated)
+                )) {
+                return GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
+                    $request,
+                    'The requested page was not accessible with the provided credentials',
+                    ['code' => PageAccessFailureReasons::ACCESS_DENIED_GENERAL]
+                );
+            }
 
 			$resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_loginPage']);
 		} catch (\Exception $e) {
