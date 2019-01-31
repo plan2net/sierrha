@@ -1,6 +1,6 @@
 # Ṣıẹrrḥa - Site Error Handler
 
-A set of error handlers that extends TYPO3's site error handlers (work in progress).
+A set of error handlers that extends TYPO3's default site error handling (work in progress).
 
 For now only one handler is available:
 
@@ -27,8 +27,9 @@ Install and activate the extension in the Extension manager.
 
 Tick the checkbox to enable the _debug mode_:
 
-In case of configuration errors a detailed error will be shown if the HTTP request comes
-from an IP listed in `$GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']`.
+In case of configuration errors a detailed error will be shown when in _debug mode_ or
+if the HTTP request comes from an IP listed in `$GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']`.
+Otherwise the error will be passed on to be handled by TYPO3.
 
 ## Site Configuration
 
@@ -43,9 +44,11 @@ Save the configuration.
 **Login Page:** TYPO3 page or external URL  
 **Return Parameter for Login Page URL:** URL query parameter of the login page without leading ? or &
 
-###URL Markers
+The parameter used by the extension "felogin" is `return_url=###URL###`.
 
-The return parameter supports marker substitution.  
+### URL Markers
+
+The return parameter of the URL supports marker substitution.  
 
 Marker | Description
 ------ | -----------
