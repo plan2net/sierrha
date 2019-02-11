@@ -3,11 +3,8 @@
     <file source-language="en" datatype="plaintext" original="messages" product-name="sierrha">
         <header/>
         <body>
-            <trans-unit id="resourceExtensionRegexp">
-                <source>Regular expression for resource file extensions</source>
-            </trans-unit>
-            <trans-unit id="debugMode">
-                <source>Enable debug mode</source>
+            <trans-unit id="resourceNotFound">
+                <source>Resource not found!</source>
             </trans-unit>
         </body>
     </file>

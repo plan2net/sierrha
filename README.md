@@ -2,17 +2,29 @@
 
 A set of error handlers that extends TYPO3's default site error handling (work in progress).
 
-For now only one handler is available:
+For now two handlers are available:
 
-* _403 "forbidden"_: redirects to a login URL if access to page without session is not permitted
+_404 "not found":_
 
-If the user is already logged in but has no access because of missing group rights he will be optionally
+Shows content from a page or external URL.
+
+When the requested URL denotes a web resource (eg .css) only a small response is sent to save bandwith. 
+("Regular Expression for resource file extensions". see *Extension Manager Configuration*)
+
+_403 "forbidden"_:
+
+Redirects to a login URL if access to page without session is not permitted.
+
+If the user is already logged in, but has no access because of missing group rights he will be optionally
 redirected to a fallback page ("Show Content from Page on Missing Permissions", see *Site Configuration*).
+
+In any other case a 404 error is triggered. 
 
 ## Requirements
 
 * TYPO3 9 LTS
-* A URL that performs a login and a redirect to a supplied URL (eg. plugin "felogin")
+* 404: A page/URL that containes a human readable "page not found" message
+* 403: A URL that performs a login and a redirect to a supplied URL (eg. plugin "felogin")
 
 ## Installation
 
@@ -28,13 +40,33 @@ Install and activate the extension in the Extension manager.
 
 ## Extension Manager Configuration
 
-Tick the checkbox to enable the _debug mode_:
+_Regular Expression For Resource File Extensions_:
+
+The file extensions to be treated as web resources by the 404 "not found" handler.  
+
+`css|gif|ico|jpe?g|js(?:on)|png|svg|webp|xml`
+
+_Enable Debug Mode_:
 
 In case of configuration errors a detailed error will be shown when in _debug mode_ or
 if the HTTP request comes from an IP listed in `$GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']`.
 Otherwise the error will be passed on to be handled by TYPO3.
 
 ## Site Configuration
+
+### 404 "not found"
+
+On tab "Error Handling" create a new handler.
+
+**HTTP Error Status Code:** "404"  
+**How to handle Errors:** "PHP Class"
+
+Save the configuration.
+
+**ErrorHandler Class Target (FQCN):** "Plan2net\Sierrha\Error\StatusNotFoundHandler"  
+**Show Content from Page on Not Found:** TYPO3 page or external URL
+
+### 403 "forbidden"
 
 On tab "Error Handling" create a new handler.
 
@@ -63,5 +95,6 @@ Marker | Description
 
 ## Changelog
 
+* 0.3.0 Send only small 404 response for missing web resources 
 * 0.2.0 Show page on missing permission for current login  
 * 0.1.0 Redirect to login page

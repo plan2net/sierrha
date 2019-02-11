@@ -3,6 +3,9 @@
     <file source-language="en" datatype="plaintext" original="messages" product-name="sierrha">
         <header/>
         <body>
+            <trans-unit id="site_errorhandling.tx_sierrha_notFoundContentSource">
+                <source>Show Content from Page on Not Found</source>
+            </trans-unit>
             <trans-unit id="site_errorhandling.tx_sierrha_loginPage">
                 <source>Login Page</source>
             </trans-unit>
