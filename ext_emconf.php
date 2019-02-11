@@ -1,6 +1,6 @@
 <?php
 
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF[$_EXTKEY] = [
     'title' => 'Ṣıẹrrḥa - Site Error Handler',
     'description' => 'A 403 "forbidden" error handler that redirects to a login URL.',
     'category' => 'fe',
@@ -18,12 +18,12 @@ $EM_CONF[$_EXTKEY] = array(
     'clearCacheOnLoad' => 0,
     'lockType' => '',
     'version' => '0.1.0',
-    'constraints' => array(
-        'depends' => array(
+    'constraints' => [
+        'depends' => [
             'backend' => '9.5',
             'frontend' => '9.5',
-        ),
-        'conflicts' => array(),
-        'suggests' => array(),
-    ),
-);
+        ],
+        'conflicts' => [],
+        'suggests' => [],
+    ],
+];

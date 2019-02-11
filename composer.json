@@ -5,15 +5,15 @@
   "license": "GPL-2.0-or-later",
   "keywords": [
     "typo3",
-	"extension",
-	"site",
-	"page",
-	"error",
-	"handler",
-	"http",
-	"status",
-	"403",
-	"forbidden"
+    "extension",
+    "site",
+    "page",
+    "error",
+    "handler",
+    "http",
+    "status",
+    "403",
+    "forbidden"
   ],
   "authors": [
     {

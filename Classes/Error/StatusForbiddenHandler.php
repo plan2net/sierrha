@@ -34,35 +34,38 @@ use TYPO3\CMS\Frontend\Page\PageAccessFailureReasons;
 /**
  * An error handler that redirects to a login page.
  */
-class StatusForbiddenHandler implements PageErrorHandlerInterface {
+class StatusForbiddenHandler implements PageErrorHandlerInterface
+{
 
-	/**
-	 * @var int
-	 */
-	protected $statusCode;
+    /**
+     * @var int
+     */
+    protected $statusCode;
 
-	/**
-	 * @var array
-	 */
-	protected $handlerConfiguration;
+    /**
+     * @var array
+     */
+    protected $handlerConfiguration;
 
-	/**
-	 * @param int $statusCode
-	 * @param array $configuration
-	 */
-	public function __construct(int $statusCode, array $configuration) {
-		$this->statusCode = $statusCode;
-		$this->handlerConfiguration = $configuration;
-	}
+    /**
+     * @param int   $statusCode
+     * @param array $configuration
+     */
+    public function __construct(int $statusCode, array $configuration)
+    {
+        $this->statusCode = $statusCode;
+        $this->handlerConfiguration = $configuration;
+    }
 
-	/**
-	 * @param ServerRequestInterface $request
-	 * @param string $message
-	 * @param array $reasons
-	 * @return ResponseInterface
-	 */
-	public function handlePageError(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface {
-		try {
+    /**
+     * @param ServerRequestInterface $request
+     * @param string                 $message
+     * @param array                  $reasons
+     * @return ResponseInterface
+     */
+    public function handlePageError(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface
+    {
+        try {
             if ($this->statusCode !== 403) {
                 throw new \InvalidArgumentException('Sierrha-StatusForbiddenHandler only handles HTTP status 403.', 1547651137);
             }
@@ -84,67 +87,68 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface {
                 );
             }
 
-			$resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_loginPage']);
-		} catch (\Exception $e) {
-			$extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('sierrha');
+            $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_loginPage']);
+        } catch (\Exception $e) {
+            $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('sierrha');
 
-			if ($extensionConfiguration['debugMode']
-				|| GeneralUtility::cmpIP(GeneralUtility::getIndpEnv('REMOTE_ADDR'), $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
-				$content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
-					get_class($e),
-					$e->getMessage(),
-					AbstractMessage::ERROR,
-					$e->getCode()
-				);
+            if ($extensionConfiguration['debugMode']
+                || GeneralUtility::cmpIP(GeneralUtility::getIndpEnv('REMOTE_ADDR'), $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
+                $content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
+                    get_class($e),
+                    $e->getMessage(),
+                    AbstractMessage::ERROR,
+                    $e->getCode()
+                );
 
-				return new HtmlResponse($content, 500);
-			}
-			throw $e;
-		}
+                return new HtmlResponse($content, 500);
+            }
+            throw $e;
+        }
 
-		/* @var $siteLanguage SiteLanguage */
-		$siteLanguage = $request->getAttribute('language');
-		$resolvedUrl = str_replace(
-			['###ISO_639-1###', '###IETF_BCP47'],
-			[$siteLanguage->getTwoLetterIsoCode(), $siteLanguage->getHreflang()],
-			$resolvedUrl
-		);
-		$requestUri = (string)$request->getUri();
-		$loginParameters = str_replace(
-			['###URL###', '###URL_BASE64###'],
-			[rawurlencode($requestUri), rawurlencode(base64_encode($requestUri))],
-			$this->handlerConfiguration['tx_sierrha_loginUrlParameter']
-		);
+        /* @var $siteLanguage SiteLanguage */
+        $siteLanguage = $request->getAttribute('language');
+        $resolvedUrl = str_replace(
+            ['###ISO_639-1###', '###IETF_BCP47'],
+            [$siteLanguage->getTwoLetterIsoCode(), $siteLanguage->getHreflang()],
+            $resolvedUrl
+        );
+        $requestUri = (string)$request->getUri();
+        $loginParameters = str_replace(
+            ['###URL###', '###URL_BASE64###'],
+            [rawurlencode($requestUri), rawurlencode(base64_encode($requestUri))],
+            $this->handlerConfiguration['tx_sierrha_loginUrlParameter']
+        );
 
-		return new RedirectResponse($resolvedUrl . (strpos($resolvedUrl, '?') === false ? '?' : '&') . $loginParameters);
-	}
+        return new RedirectResponse($resolvedUrl.(strpos($resolvedUrl, '?') === false ? '?' : '&').$loginParameters);
+    }
 
-	/**
-	 * Resolve the URL
-	 *
-	 * @param ServerRequestInterface $request
-	 * @param string $typoLinkUrl
-	 * @return string
-	 */
-	protected function resolveUrl(ServerRequestInterface $request, string $typoLinkUrl): string {
-		$linkService = GeneralUtility::makeInstance(LinkService::class);
-		$urlParams = $linkService->resolve($typoLinkUrl);
-		if ($urlParams['type'] !== 'page' && $urlParams['type'] !== 'url') {
-			throw new \InvalidArgumentException('StatusForbiddenHandler can only handle TYPO3 links of type "page" or "url"', 1547651754);
-		}
-		if ($urlParams['type'] === 'url') {
-			return $urlParams['url'];
-		}
+    /**
+     * Resolve the URL
+     *
+     * @param ServerRequestInterface $request
+     * @param string                 $typoLinkUrl
+     * @return string
+     */
+    protected function resolveUrl(ServerRequestInterface $request, string $typoLinkUrl): string
+    {
+        $linkService = GeneralUtility::makeInstance(LinkService::class);
+        $urlParams = $linkService->resolve($typoLinkUrl);
+        if ($urlParams['type'] !== 'page' && $urlParams['type'] !== 'url') {
+            throw new \InvalidArgumentException('StatusForbiddenHandler can only handle TYPO3 links of type "page" or "url"', 1547651754);
+        }
+        if ($urlParams['type'] === 'url') {
+            return $urlParams['url'];
+        }
 
-		/* @var $site Site */
-		$site = $request->getAttribute('site', null);
-		if (!$site instanceof Site) {
-			$site = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId((int)$urlParams['pageuid']);
-		}
+        /* @var $site Site */
+        $site = $request->getAttribute('site', null);
+        if (!$site instanceof Site) {
+            $site = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId((int)$urlParams['pageuid']);
+        }
 
-		return (string)$site->getRouter()->generateUri(
-			(int)$urlParams['pageuid'],
-			['_language' => $request->getAttribute('language', null)]
-		);
-	}
+        return (string)$site->getRouter()->generateUri(
+            (int)$urlParams['pageuid'],
+            ['_language' => $request->getAttribute('language', null)]
+        );
+    }
 }
