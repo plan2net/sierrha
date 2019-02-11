@@ -6,6 +6,9 @@ For now only one handler is available:
 
 * _403 "forbidden"_: redirects to a login URL if access to page without session is not permitted
 
+If the user is already logged in but has no access because of missing group rights he will be optionally
+redirected to a fallback page ("Show Content from Page on Missing Permissions", see *Site Configuration*).
+
 ## Requirements
 
 * TYPO3 9 LTS
@@ -42,9 +45,10 @@ Save the configuration.
 
 **ErrorHandler Class Target (FQCN):** "Plan2net\Sierrha\Error\StatusForbiddenHandler"  
 **Login Page:** TYPO3 page or external URL  
+**Show Content from Page on Missing Permissions:** TYPO3 page or external URL
 **Return Parameter for Login Page URL:** URL query parameter of the login page without leading ? or &
 
-The parameter used by the extension "felogin" is `return_url=###URL###`.
+The parameter for the login page used by the extension "felogin" is `return_url=###URL###`.
 
 ### URL Markers
 
