@@ -5,18 +5,19 @@
   "license": "GPL-2.0-or-later",
   "keywords": [
     "typo3",
-	"extension",
-	"site",
-	"page",
-	"error",
-	"handler",
-	"http",
-	"status",
-	"403",
-	"forbidden"
+    "extension",
+    "site",
+    "page",
+    "error",
+    "handler",
+    "http",
+    "status",
+    "403",
+    "forbidden"
   ],
   "authors": [
     {
+      "name": "plan2net GmbH",
       "email": "office@plan2.net",
       "homepage": "http://www.plan2.net"
     }
