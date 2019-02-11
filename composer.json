@@ -17,10 +17,15 @@
   ],
   "authors": [
     {
+      "name": "plan2net GmbH",
       "email": "office@plan2.net",
       "homepage": "http://www.plan2.net"
     }
   ],
+  "support": {
+    "issues": "https://github.com/plan2net/sierrha/issues",
+    "source": "https://github.com/plan2net/sierrha/"
+  },
   "require": {
     "php": "^7.2",
     "typo3/cms-backend": "^9.5",
