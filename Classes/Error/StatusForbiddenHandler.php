@@ -24,17 +24,18 @@ use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\ErrorController;
 use TYPO3\CMS\Frontend\Page\PageAccessFailureReasons;
 
 /**
  * An error handler that redirects to a login page.
  */
-class StatusForbiddenHandler implements PageErrorHandlerInterface {
+class StatusForbiddenHandler implements PageErrorHandlerInterface
+{
 
 	/**
 	 * @var int
@@ -50,7 +51,8 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface {
 	 * @param int $statusCode
 	 * @param array $configuration
 	 */
-	public function __construct(int $statusCode, array $configuration) {
+	public function __construct(int $statusCode, array $configuration)
+	{
 		$this->statusCode = $statusCode;
 		$this->handlerConfiguration = $configuration;
 	}
@@ -60,8 +62,15 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface {
 	 * @param string $message
 	 * @param array $reasons
 	 * @return ResponseInterface
+	 * @throws \Exception
 	 */
-	public function handlePageError(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface {
+	public function handlePageError(
+		ServerRequestInterface $request,
+		string $message,
+		array $reasons = []
+	): ResponseInterface {
+		$extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('sierrha');
+		$resolvedUrl = '/';
 		try {
 			if ($this->statusCode !== 403) {
 				throw new \InvalidArgumentException('StatusForbiddenHandler only handles status 403.', 1547651137);
@@ -73,23 +82,27 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface {
 			// if the user is already logged in, another login with the same account will not resolve the issue
 			// NOTE: we're checking also for BE sessions in case a FE user group is simulated
 			$context = GeneralUtility::makeInstance(Context::class);
-			if ($context->getPropertyFromAspect('frontend.user', 'isLoggedIn')
-				|| ($context->getPropertyFromAspect('backend.user', 'isLoggedIn')
-					&& $context->getPropertyFromAspect('frontend.user', 'groupIds')[1] === -2 // special "any group" (simulated)
-				)) {
-				return GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
-					$request,
-					'The requested page was not accessible with provided credentials',
-					['code' => PageAccessFailureReasons::ACCESS_DENIED_GENERAL]
-				);
+			if ($context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
+				if (!empty($this->handlerConfiguration['tx_sierrha_missingPermissionsPage'])) {
+					$resolvedUrl = $this->resolveUrl($request,
+						$this->handlerConfiguration['tx_sierrha_missingPermissionsPage']);
+				} elseif ($context->getPropertyFromAspect('backend.user', 'isLoggedIn')
+					&& $context->getPropertyFromAspect('frontend.user',
+						'groupIds')[1] === -2 // special "any group" (simulated)
+				) {
+					return GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
+						$request,
+						'The requested page was not accessible with provided credentials',
+						['code' => PageAccessFailureReasons::ACCESS_DENIED_GENERAL]
+					);
+				}
+			} else {
+				$resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_loginPage']);
 			}
-
-			$resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_loginPage']);
 		} catch (\Exception $e) {
-			$extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('sierrha');
-
 			if ($extensionConfiguration['debugMode']
-				|| GeneralUtility::cmpIP(GeneralUtility::getIndpEnv('REMOTE_ADDR'), $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
+				|| GeneralUtility::cmpIP(GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+					$GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
 				$content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
 					get_class($e),
 					$e->getMessage(),
@@ -116,21 +129,23 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface {
 			$this->handlerConfiguration['tx_sierrha_loginUrlParameter']
 		);
 
-		return new RedirectResponse($resolvedUrl . (strpos($resolvedUrl, '?') === false ? '?' : '&') . $loginParameters);
+		return new RedirectResponse($resolvedUrl . (strpos($resolvedUrl,
+				'?') === false ? '?' : '&') . $loginParameters);
 	}
 
 	/**
-	 * Resolve the URL
-	 *
 	 * @param ServerRequestInterface $request
 	 * @param string $typoLinkUrl
 	 * @return string
+	 * @throws \TYPO3\CMS\Core\Routing\InvalidRouteArgumentsException
 	 */
-	protected function resolveUrl(ServerRequestInterface $request, string $typoLinkUrl): string {
+	protected function resolveUrl(ServerRequestInterface $request, string $typoLinkUrl): string
+	{
 		$linkService = GeneralUtility::makeInstance(LinkService::class);
 		$urlParams = $linkService->resolve($typoLinkUrl);
 		if ($urlParams['type'] !== 'page' && $urlParams['type'] !== 'url') {
-			throw new \InvalidArgumentException('StatusForbiddenHandler can only handle TYPO3 links of type "page" or "url"', 1547651754);
+			throw new \InvalidArgumentException('StatusForbiddenHandler can only handle TYPO3 links of type "page" or "url"',
+				1547651754);
 		}
 		if ($urlParams['type'] === 'url') {
 			return $urlParams['url'];
@@ -147,4 +162,5 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface {
 			['_language' => $request->getAttribute('language', null)]
 		);
 	}
+
 }

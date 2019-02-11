@@ -41,6 +41,7 @@ Save the configuration.
 
 **ErrorHandler Class Target (FQCN):** "Plan2net\Sierrha\Error\StatusForbiddenHandler"  
 **Login Page:** TYPO3 page or external URL  
+**Missing permissions page:** TYPO3 page or external URL  
 **Return Parameter for Login Page URL:** URL query parameter of the login page without leading ? or &
 
 ###URL Markers
