@@ -66,6 +66,29 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface
      */
     public function handlePageError(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface
     {
+        if ($this->isPageGroupAccessDenial($reasons)) {
+            return $this->handlePageGroupAccessDenial($request, $message, $reasons);
+        } else {
+            // trigger "page not found"
+            $response = GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
+                $request,
+                $message,
+                $reasons
+            );
+            // stop further processing to make sure TYPO3 returns 403 and not 404
+            throw new ImmediateResponseException($response);
+        }
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param string                 $message
+     * @param array                  $reasons
+     * @return ResponseInterface
+     * @throws \Exception
+     */
+    public function handlePageGroupAccessDenial(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface
+    {
         try {
             if ($this->statusCode !== 403) {
                 throw new \InvalidArgumentException('Sierrha-StatusForbiddenHandler only handles HTTP status 403.', 1547651137);
@@ -155,6 +178,26 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface
             (int)$urlParams['pageuid'],
             ['_language' => $request->getAttribute('language', null)]
         );
+    }
+
+    /**
+     * @param array $reasons
+     * @return bool
+     */
+    protected function isPageGroupAccessDenial(array $reasons): bool
+    {
+        if (!isset($reasons['code'])) {
+            return false;
+        }
+        if ($reasons['code'] === PageAccessFailureReasons::ACCESS_DENIED_PAGE_NOT_RESOLVED
+            || $reasons['code'] === PageAccessFailureReasons::ACCESS_DENIED_SUBSECTION_NOT_RESOLVED) {
+            unset($reasons['code']);
+            if (count($reasons) === 1 && isset($reasons['fe_group'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
