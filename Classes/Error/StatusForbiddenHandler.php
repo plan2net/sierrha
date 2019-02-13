@@ -82,8 +82,8 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface
                 )) {
                 return GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
                     $request,
-                    'The requested page was not accessible with the provided credentials',
-                    ['code' => PageAccessFailureReasons::ACCESS_DENIED_GENERAL]
+                    'The requested page was not accessible with the current group rights',
+                    $reasons
                 );
             }
 
