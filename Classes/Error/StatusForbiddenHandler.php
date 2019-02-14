@@ -80,19 +80,25 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface
                 || ($context->getPropertyFromAspect('backend.user', 'isLoggedIn')
                     && $context->getPropertyFromAspect('frontend.user', 'groupIds')[1] === -2 // special "any group" (simulated)
                 )) {
-                return GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
+                // trigger "page not found"
+                $response = GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
                     $request,
                     'The requested page was not accessible with the current group rights',
                     $reasons
                 );
+                // stop further processing to make sure TYPO3 returns 403 and not 404
+                throw new ImmediateResponseException($response);
             }
 
             $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_loginPage']);
+        } catch (ImmediateResponseException $e) {
+            throw $e;
         } catch (\Exception $e) {
             $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('sierrha');
 
             if ($extensionConfiguration['debugMode']
                 || GeneralUtility::cmpIP(GeneralUtility::getIndpEnv('REMOTE_ADDR'), $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
+                // @todo add detailed debug output
                 $content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
                     get_class($e),
                     $e->getMessage(),
@@ -100,7 +106,7 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface
                     $e->getCode()
                 );
 
-                return new HtmlResponse($content, 500);
+                throw new ImmediateResponseException(new HtmlResponse($content, 500));
             }
             throw $e;
         }
