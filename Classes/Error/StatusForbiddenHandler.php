@@ -21,6 +21,7 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Controller\ErrorPageController;
 use TYPO3\CMS\Core\Error\PageErrorHandler\PageErrorHandlerInterface;
 use TYPO3\CMS\Core\Http\HtmlResponse;
+use TYPO3\CMS\Core\Http\ImmediateResponseException;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -33,6 +34,9 @@ use TYPO3\CMS\Frontend\Page\PageAccessFailureReasons;
 
 /**
  * An error handler that redirects to a login page.
+ *
+ * Class StatusForbiddenHandler
+ * @package Plan2net\Sierrha\Error
  */
 class StatusForbiddenHandler implements PageErrorHandlerInterface
 {
@@ -217,4 +221,5 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface
 
         return false;
     }
+
 }
