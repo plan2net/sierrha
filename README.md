@@ -60,3 +60,8 @@ Marker | Description
 ###URL_BASE64### | current URL base64 encoded (URL encoded)
 ###ISO_639-1### | current language as two letter ISO code (ISO 639-1)
 ###IETF_BCP47### | current language as IETF language tag (IETF BCP 47, RFC 5646, RFC 4646, RFC 3066, RFC 1766)
+
+## Changelog
+
+* 0.2.0 Show page on missing permission for current login  
+* 0.1.0 Redirect to login page
