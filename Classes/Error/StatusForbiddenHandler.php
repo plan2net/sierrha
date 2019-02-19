@@ -172,7 +172,7 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface
             return $resolvedUrl;
         }
 
-        /* @var $site Site */
+        /** @var Site $site */
         $site = $request->getAttribute('site', null);
         if (!$site instanceof Site) {
             $site = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId((int)$urlParams['pageuid']);
