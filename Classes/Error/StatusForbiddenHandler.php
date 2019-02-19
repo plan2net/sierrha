@@ -209,7 +209,7 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface
      * @return bool
      * @throws \TYPO3\CMS\Core\Context\Exception\AspectNotFoundException
      */
-    protected function isLoggedIn(Context $context)
+    protected function isLoggedIn(Context $context): bool
     {
         // we're checking also for BE sessions in case a FE user group is simulated
         if ($context->getPropertyFromAspect('frontend.user', 'isLoggedIn')
