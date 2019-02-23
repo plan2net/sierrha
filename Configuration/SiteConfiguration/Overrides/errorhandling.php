@@ -6,14 +6,13 @@ $GLOBALS['SiteConfiguration']['site_errorhandling']['columns']['tx_sierrha_login
     'config' => [
         'type' => 'input',
         'renderType' => 'inputLink',
-        'placeholder' => 'LLL:EXT:sierrha/Resources/Private/Language/locallang_tca.xlf:site_errorhandling.tx_sierrha_loginPage.placeholder',
+        'placeholder' => 'LLL:EXT:sierrha/Resources/Private/Language/locallang_tca.xlf:site_errorhandling.tx_sierrha.inputLink.placeholder',
         'eval' => 'trim',
         'fieldControl' => [
             'linkPopup' => [
                 'options' => [
-                    'title' => 'LLL:EXT:sierrha/Resources/Private/Language/locallang_tca.xlf:site_errorhandling.tx_sierrha_loginPage.wizard_title',
                     'blindLinkOptions' => 'mail,file,spec,folder',
-                    'blindLinkFields' => 'class,class,params,target,title',
+                    'blindLinkFields' => 'class,params,target,title',
                 ]
             ]
         ]
@@ -36,14 +35,13 @@ $GLOBALS['SiteConfiguration']['site_errorhandling']['columns']['tx_sierrha_noPer
     'config' => [
         'type' => 'input',
         'renderType' => 'inputLink',
-        'placeholder' => 'LLL:EXT:sierrha/Resources/Private/Language/locallang_tca.xlf:site_errorhandling.tx_sierrha_noPermissionsContentSource.placeholder',
+        'placeholder' => 'LLL:EXT:sierrha/Resources/Private/Language/locallang_tca.xlf:site_errorhandling.tx_sierrha.inputLink.placeholder',
         'eval' => 'trim',
         'fieldControl' => [
             'linkPopup' => [
                 'options' => [
-                    'title' => 'LLL:EXT:sierrha/Resources/Private/Language/locallang_tca.xlf:site_errorhandling.tx_sierrha_noPermissionsContentSource.wizard_title',
                     'blindLinkOptions' => 'mail,file,spec,folder',
-                    'blindLinkFields' => 'class,class,params,target,title',
+                    'blindLinkFields' => 'class,params,target,title',
                 ]
             ]
         ]
