@@ -9,14 +9,11 @@
             <trans-unit id="site_errorhandling.tx_sierrha_noPermissionsContentSource">
                 <source>Show Content from Page on Missing Permissions</source>
             </trans-unit>
-            <trans-unit id="site_errorhandling.tx_sierrha_loginPage.placeholder">
-                <source>Internal page id or external URL</source>
-            </trans-unit>
-            <trans-unit id="site_errorhandling.tx_sierrha_loginPage.wizard_title">
-                <source>Login Page - Page or URL</source>
-            </trans-unit>
             <trans-unit id="site_errorhandling.tx_sierrha_loginUrlParameter">
                 <source>Return Parameter for Login Page URL</source>
+            </trans-unit>
+            <trans-unit id="site_errorhandling.tx_sierrha.inputLink.placeholder">
+                <source>Internal page id or external URL</source>
             </trans-unit>
         </body>
     </file>
