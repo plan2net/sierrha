@@ -106,11 +106,14 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface
             // if the user is already logged in, another login with the same account will not resolve the issue
             if ($this->isLoggedIn($context)) {
                 if (empty($this->handlerConfiguration['tx_sierrha_noPermissionsContentSource'])) {
-                    return GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
+                    // trigger "page not found"
+                    $response = GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
                         $request,
                         'The requested page was not accessible with the provided credentials',
                         ['code' => PageAccessFailureReasons::ACCESS_DENIED_GENERAL]
                     );
+                    // stop further processing to make sure TYPO3 returns 403 and not 404
+                    throw new ImmediateResponseException($response);
                 }
                 $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_noPermissionsContentSource']);
                 $response = new HtmlResponse(GeneralUtility::getUrl($resolvedUrl));
@@ -124,6 +127,8 @@ class StatusForbiddenHandler implements PageErrorHandlerInterface
                 );
                 $response = new RedirectResponse($resolvedUrl . (strpos($resolvedUrl, '?') === false ? '?' : '&') . $loginParameters);
             }
+        } catch (ImmediateResponseException $e) {
+            throw $e;
         } catch (\Exception $e) {
             $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('sierrha');
 
