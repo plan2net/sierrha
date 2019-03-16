@@ -87,7 +87,7 @@ class StatusForbiddenHandler extends BaseHandler
                     throw new ImmediateResponseException($response);
                 }
                 $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_noPermissionsContentSource']);
-                $response = new HtmlResponse(GeneralUtility::getUrl($resolvedUrl));
+                $response = new HtmlResponse($this->fetchUrl($resolvedUrl, 'noPermissionsTitle', 'noPermissionsDetails'));
             } else {
                 $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_loginPage']);
                 $requestUri = (string)$request->getUri();

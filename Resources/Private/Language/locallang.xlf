@@ -6,6 +6,18 @@
             <trans-unit id="resourceNotFound">
                 <source>Resource not found!</source>
             </trans-unit>
+            <trans-unit id="pageNotFoundTitle">
+                <source>Page Not Found</source>
+            </trans-unit>
+            <trans-unit id="pageNotFoundDetails">
+                <source>The requested page could not be found.</source>
+            </trans-unit>
+            <trans-unit id="noPermissionsTitle">
+                <source>No Permissions</source>
+            </trans-unit>
+            <trans-unit id="noPermissions">
+                <source>You have no permissions to access the requested page.</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

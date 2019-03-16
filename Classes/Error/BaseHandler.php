@@ -103,6 +103,35 @@ abstract class BaseHandler implements PageErrorHandlerInterface {
     }
 
     /**
+     * Fetch content of URL
+     *
+     * @param string $url
+     * @return string
+     */
+    protected function fetchUrl(string $url, string $labelTitle, string $labelDetails): string
+    {
+        $content = GeneralUtility::getUrl($url);
+        if ($content === false) {
+            // @todo add error logging
+            $content = '';
+        } elseif (trim(strip_tags($content)) === '') {
+            // an empty message is considered an error
+            // @todo add error logging
+            $content = '';
+        }
+
+        if ($content === '') {
+            $languageService = $this->getLanguageService();
+            $content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
+                $languageService->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:' . $labelTitle),
+                $languageService->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:' . $labelDetails)
+            );
+        }
+
+        return $content;
+    }
+
+    /**
      * @param string $message
      * @param \Throwable $e
      * @return string

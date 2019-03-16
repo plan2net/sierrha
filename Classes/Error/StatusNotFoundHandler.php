@@ -48,7 +48,7 @@ class StatusNotFoundHandler extends BaseHandler
                 $content = $this->getLanguageService()->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:resourceNotFound');
             } else {
                 $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_notFoundContentSource']);
-                $content = GeneralUtility::getUrl($resolvedUrl);
+                $content = $this->fetchUrl($resolvedUrl, 'pageNotFoundTitle', 'pageNotFoundDetails');
             }
         } catch (\Exception $e) {
             $content = $this->handleInternalFailure($message, $e);
