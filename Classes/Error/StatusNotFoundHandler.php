@@ -34,6 +34,7 @@ class StatusNotFoundHandler extends BaseHandler
      * @param string                 $message
      * @param array                  $reasons
      * @return ResponseInterface
+     * @throws \Exception
      */
     public function handlePageError(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface
     {
