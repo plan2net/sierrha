@@ -14,6 +14,7 @@ namespace Plan2net\Sierrha\Error;
  * LICENSE.txt file that was distributed with this source code.
  */
 
+use Plan2net\Sierrha\Utility\Url;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\HtmlResponse;
@@ -48,7 +49,8 @@ class StatusNotFoundHandler extends BaseHandler
                 $content = $this->getLanguageService()->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:resourceNotFound');
             } else {
                 $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_notFoundContentSource']);
-                $content = $this->fetchUrl($resolvedUrl, 'pageNotFoundTitle', 'pageNotFoundDetails');
+                $urlUtility = GeneralUtility::makeInstance(Url::class);
+                $content = $urlUtility->fetchWithFallback($resolvedUrl, 'pageNotFoundTitle', 'pageNotFoundDetails');
             }
         } catch (\Exception $e) {
             $content = $this->handleInternalFailure($message, $e);
