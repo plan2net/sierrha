@@ -33,6 +33,9 @@
     "typo3/cms-backend": "^9.5",
     "typo3/cms-frontend": "^9.5"
   },
+  "require-dev": {
+    "typo3/testing-framework": "^4.0"
+  },
   "autoload": {
     "psr-4": {
       "Plan2net\\Sierrha\\": "Classes/"
