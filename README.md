@@ -8,8 +8,10 @@ _404 "not found":_
 
 Shows content from a page or external URL.
 
-When the requested URL denotes a web resource (eg .css) only a small response is sent to save bandwith. 
-("Regular Expression for resource file extensions". see *Extension Manager Configuration*)
+When the requested URL denotes a web resource (eg .css) only a small response is sent to save bandwith 
+("Regular Expression for resource file extensions", see *Extension Manager Configuration*).
+
+If the resource is unavialable or the content is empty a message in the standard TYPO3 error layout is shown.  
 
 _403 "forbidden"_:
 
@@ -18,13 +20,13 @@ Redirects to a login URL if access to page without session is not permitted.
 If the user is already logged in, but has no access because of missing group rights he will be optionally
 redirected to a fallback page ("Show Content from Page on Missing Permissions", see *Site Configuration*).
 
-In any other case a 404 error is triggered. 
+In any other case a 404 "not found" error is triggered. TYPO3 will invoke the configured error handler. 
 
 ## Requirements
 
 * TYPO3 9 LTS
 * 404: A page/URL that containes a human readable "page not found" message
-* 403: A URL that performs a login and a redirect to a supplied URL (eg. plugin "felogin")
+* 403: A URL that performs a login and a redirect to a supplied URL (eg. extension "felogin")
 
 ## Installation
 
