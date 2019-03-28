@@ -44,13 +44,21 @@ class StatusNotFoundHandler extends BaseHandler
             }
 
             // don't show pretty error page for web resources
+            $resourceExtensionRegexpMatches = [];
             if (!empty($this->extensionConfiguration['resourceExtensionRegexp']
-                && preg_match('/\.(?:'.$this->extensionConfiguration['resourceExtensionRegexp'].')$/', $request->getUri()->getPath()))) {
-                $content = $this->getLanguageService()->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:resourceNotFound');
+                && preg_match(
+                    '/\.(?:'.$this->extensionConfiguration['resourceExtensionRegexp'].')$/',
+                    $request->getUri()->getPath(),
+                    $resourceExtensionRegexpMatches
+                )
+            )) {
+                $content = $this->getLanguageService()->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:resourceNotFound')
+                    . $this->debugInformationAsHtml(['ext' => $resourceExtensionRegexpMatches[0]]);
             } else {
                 $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_notFoundContentSource']);
                 $urlUtility = GeneralUtility::makeInstance(Url::class);
-                $content = $urlUtility->fetchWithFallback($resolvedUrl, 'pageNotFoundTitle', 'pageNotFoundDetails');
+                $content = $urlUtility->fetchWithFallback($resolvedUrl, 'pageNotFoundTitle', 'pageNotFoundDetails')
+                    . $this->debugInformationAsHtml(['url' => $resolvedUrl]);
             }
         } catch (\Exception $e) {
             $content = $this->handleInternalFailure($message, $e);

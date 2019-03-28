@@ -15,8 +15,6 @@ namespace Plan2net\Sierrha\Error;
  */
 
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Controller\ErrorPageController;
 use TYPO3\CMS\Core\Error\PageErrorHandler\PageErrorHandlerInterface;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\ImmediateResponseException;
@@ -114,9 +112,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
         // @todo add logging
         $title = 'Page Not Found';
         $exitImmediately = false;
-        if ($this->extensionConfiguration['debugMode']
-            || GeneralUtility::cmpIP(GeneralUtility::getIndpEnv('REMOTE_ADDR'),
-                $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
+        if ($this->isDebugModeActive()) {
             $title .= ': ' . $message;
             $message = get_class($e) . ': ' . $e->getMessage();
             if ($e->getCode()) {
@@ -124,17 +120,82 @@ abstract class BaseHandler implements PageErrorHandlerInterface
             }
             $exitImmediately = true;
         }
-        // @todo add detailed debug output
         $content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
             $title,
             $message,
             AbstractMessage::ERROR
         );
         if ($exitImmediately) {
+            $content .= $this->debugInformationAsHtml(['exception' => $e]);
             throw new ImmediateResponseException(new HtmlResponse($content, 500));
         }
 
         return $content;
+    }
+
+    /**
+     * Create HTML comment containing debug information
+     *
+     * @param array $data
+     * @return string
+     */
+    protected function debugInformationAsHtml(array $data = []): string
+    {
+        $content = '';
+        if ($this->isDebugModeActive()) {
+            $url = isset($data['url']) ? "CONTENT URL: {$data['url']}\n" : '';
+            $ext = isset($data['ext']) ? "RESOURCE FILE EXTENSION: {$data['ext']}\n" : '';
+            $login = isset($data['login']) ? "LOGIN: yes\n" : '';
+            $content = "
+<!--
+HTTP STATUS: {$this->statusCode}
+{$url}{$ext}{$login}
+-->";
+
+            $content .= $this->extensionConfiguration;
+            $content .= $this->handlerConfiguration;
+
+            if (isset($data['exception'])) {
+                $content .= 'EXCEPTION: ' . $data['exception']->getMessage() ."\n"
+                    . $data['exception']->getTraceAsString();
+            }
+
+            $content .= "\n-->\n";
+        }
+
+        return $content;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isDebugModeActive(): bool
+    {
+        $active = false;
+        if ($this->extensionConfiguration['debugMode']) {
+            if (GeneralUtility::getApplicationContext()->isProduction()) {
+                /** @var Context $context */
+                $context = GeneralUtility::makeInstance(Context::class);
+                if (GeneralUtility::cmpIP(GeneralUtility::getIndpEnv(
+                        'REMOTE_ADDR'),
+                        $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']
+                    )
+                    || ($context->getPropertyFromAspect('backend.user', 'isLoggedIn'))) {
+                    $active = true;
+                }
+            } else {
+                $active = true;
+            }
+        } elseif (GeneralUtility::getApplicationContext()->isDevelopment()
+            && GeneralUtility::cmpIP(
+                GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+                $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']
+            )
+        ) {
+            $active = true;
+        }
+
+        return $active;
     }
 
     /**

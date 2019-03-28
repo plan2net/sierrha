@@ -90,7 +90,10 @@ class StatusForbiddenHandler extends BaseHandler
                 }
                 $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_noPermissionsContentSource']);
                 $urlUtility = GeneralUtility::makeInstance(Url::class);
-                $response = new HtmlResponse($urlUtility->fetchWithFallback($resolvedUrl, 'noPermissionsTitle', 'noPermissionsDetails'));
+                $response = new HtmlResponse(
+                    $urlUtility->fetchWithFallback($resolvedUrl, 'noPermissionsTitle', 'noPermissionsDetails')
+                    . $this->debugInformationAsHtml(['url' => $resolvedUrl, 'login' => true])
+                );
             } else {
                 $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_loginPage']);
                 $requestUri = (string)$request->getUri();
@@ -113,6 +116,7 @@ class StatusForbiddenHandler extends BaseHandler
     /**
      * @param array $reasons
      * @return bool
+     * @throws \TYPO3\CMS\Core\Context\Exception\AspectNotFoundException
      */
     protected function isPageGroupAccessDenial(array $reasons): bool
     {
