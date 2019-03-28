@@ -91,6 +91,6 @@ abstract class BaseHandler implements PageErrorHandlerInterface {
      */
     protected function getLanguageService(): LanguageService
     {
-        return $GLOBALS['LANG'];
+        return $GLOBALS['LANG'] ?? GeneralUtility::makeInstance(LanguageService::class);
     }
 }
