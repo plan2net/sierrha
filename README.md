@@ -2,23 +2,37 @@
 
 A set of error handlers that extends TYPO3's default site error handling (work in progress).
 
-For now two handlers are available:
+## Available Handlers
 
-_404 "not found":_
+### Page Not Found (HTTP Status 404)
 
 Shows content from a page or external URL.
 
-When the requested URL denotes a web resource (eg .css) only a small response is sent to save bandwith 
-("Regular Expression for resource file extensions", see *Extension Manager Configuration*).
+If the resource is unavailable or the content is empty a message in the standard TYPO3 error layout is shown.  
 
-If the resource is unavialable or the content is empty a message in the standard TYPO3 error layout is shown.  
+When the requested URL denotes a web resource (eg .css) only a small response is sent to save bandwidth 
+("Regular expression for resource file extensions", see [Extension Manager Configuration][em]).
 
-_403 "forbidden"_:
+The file extensions to be treated by default as web resources:
+
+* css
+* gif
+* ico
+* jpg
+* jpeg
+* js
+* json
+* png
+* svg
+* webp
+* xml
+
+### Forbidden (HTTP Status 403)
 
 Redirects to a login URL if access to page without session is not permitted.
 
 If the user is already logged in, but has no access because of missing group rights he will be optionally
-redirected to a fallback page ("Show Content from Page on Missing Permissions", see *Site Configuration*).
+redirected to a fallback page ("Show Content from Page on Missing Permissions", see [Site Configuration][site]).
 
 In any other case a 404 "not found" error is triggered. TYPO3 will invoke the configured error handler. 
 
@@ -44,7 +58,7 @@ Install and activate the extension in the Extension manager.
 
 _Regular Expression For Resource File Extensions_:
 
-The file extensions to be treated as web resources by the 404 "not found" handler.  
+This is the default regular expression.
 
 `css|gif|ico|jpe?g|js(?:on)|png|svg|webp|xml`
 
@@ -79,10 +93,10 @@ Save the configuration.
 
 **ErrorHandler Class Target (FQCN):** "Plan2net\Sierrha\Error\StatusForbiddenHandler"  
 **Login Page:** TYPO3 page or external URL  
-**Show Content from Page on Missing Permissions:** TYPO3 page or external URL
+**Show Content from Page on Missing Permissions:** TYPO3 page or external URL  
 **Return Parameter for Login Page URL:** URL query parameter of the login page without leading ? or &
 
-The parameter for the login page used by the extension "felogin" is `return_url=###URL###`.
+_Note:_ The parameter for the login page used by the extension "felogin" is `return_url=###URL###`.
 
 ### URL Markers
 
@@ -93,10 +107,13 @@ Marker | Description
 ###URL### |current URL (URL encoded)
 ###URL_BASE64### | current URL base64 encoded (URL encoded)
 ###ISO_639-1### | current language as two letter ISO code (ISO 639-1)
-###IETF_BCP47### | current language as IETF language tag (IETF BCP 47, RFC 5646, RFC 4646, RFC 3066, RFC 1766)
+###IETF_BCP47### | current language as IETF language tag (IETF BCP 47, RFC 5646/4646/3066/1766) aka hreflang
 
 ## Changelog
 
-* 0.3.0 Send only small 404 response for missing web resources 
-* 0.2.0 Show page on missing permission for current login  
+* 0.3.0 Show error page for 404 status; send only a small 404 response for missing web resources 
+* 0.2.0 Show error page on missing permission for current login  
 * 0.1.0 Redirect to login page
+
+[em]: #extension-manager-configuration
+[site]: #site-configuration

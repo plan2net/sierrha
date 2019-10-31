@@ -1,6 +1,6 @@
 {
   "name": "plan2net/sierrha",
-  "description": "A 403 'forbidden' error handler for TYPO3 that redirects to a login URL.",
+  "description": "404 'not found' and 403 'forbidden' error handlers. The 404 handler shows custom content for missing pages but not resources like CSS or JS. The 403 handler redirects to a login URL on unauthorized access.",
   "type": "typo3-cms-extension",
   "license": "GPL-2.0-or-later",
   "keywords": [
@@ -13,7 +13,9 @@
     "http",
     "status",
     "403",
-    "forbidden"
+    "404",
+    "forbidden",
+    "not found"
   ],
   "authors": [
     {
