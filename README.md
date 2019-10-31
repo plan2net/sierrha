@@ -16,6 +16,7 @@ When the requested URL denotes a web resource (eg .css) only a small response is
 The file extensions to be treated by default as web resources:
 
 * css
+* eot
 * gif
 * ico
 * jpg
@@ -24,7 +25,10 @@ The file extensions to be treated by default as web resources:
 * json
 * png
 * svg
+* ttf
 * webp
+* woff
+* woff2
 * xml
 
 ### Forbidden (HTTP Status 403)
@@ -60,7 +64,7 @@ _Regular Expression For Resource File Extensions_:
 
 This is the default regular expression.
 
-`css|gif|ico|jpe?g|js(?:on)|png|svg|webp|xml`
+`css|eot|gif|ico|jpe?g|js(?:on)|png|svg|ttf|webp|woff2?|xml`
 
 _Enable Debug Mode_:
 
@@ -111,6 +115,7 @@ Marker | Description
 
 ## Changelog
 
+* 0.3.1 Add eot, ttf and woff/woff2 to the list of web resources
 * 0.3.0 Show error page for 404 status; send only a small 404 response for missing web resources 
 * 0.2.0 Show error page on missing permission for current login  
 * 0.1.0 Redirect to login page
