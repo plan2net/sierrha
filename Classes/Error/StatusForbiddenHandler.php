@@ -16,13 +16,10 @@ namespace Plan2net\Sierrha\Error;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Context\Context;
-use TYPO3\CMS\Core\Controller\ErrorPageController;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\ImmediateResponseException;
 use TYPO3\CMS\Core\Http\RedirectResponse;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\ErrorController;
 use TYPO3\CMS\Frontend\Page\PageAccessFailureReasons;
@@ -46,7 +43,7 @@ class StatusForbiddenHandler extends BaseHandler
     public function handlePageError(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface
     {
         if ($this->isPageGroupAccessDenial($reasons)) {
-            return $this->handlePageGroupAccessDenial($request, $message, $reasons);
+            return $this->handlePageGroupAccessDenial($request, $message);
         } else {
             // trigger "page not found"
             $response = GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
@@ -62,11 +59,10 @@ class StatusForbiddenHandler extends BaseHandler
     /**
      * @param ServerRequestInterface $request
      * @param string                 $message
-     * @param array                  $reasons
      * @return ResponseInterface
      * @throws \Exception
      */
-    public function handlePageGroupAccessDenial(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface
+    protected function handlePageGroupAccessDenial(ServerRequestInterface $request, string $message): ResponseInterface
     {
         try {
             if ($this->statusCode !== 403) {
@@ -105,21 +101,7 @@ class StatusForbiddenHandler extends BaseHandler
         } catch (ImmediateResponseException $e) {
             throw $e;
         } catch (\Exception $e) {
-            $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('sierrha');
-
-            if ($extensionConfiguration['debugMode']
-                || GeneralUtility::cmpIP(GeneralUtility::getIndpEnv('REMOTE_ADDR'), $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
-                // @todo add detailed debug output
-                $content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
-                    get_class($e),
-                    $e->getMessage(),
-                    AbstractMessage::ERROR,
-                    $e->getCode()
-                );
-
-                throw new ImmediateResponseException(new HtmlResponse($content, 500));
-            }
-            throw $e;
+            $response = new HtmlResponse($this->handleInternalFailure($message, $e));
         }
 
         return $response;
@@ -162,5 +144,4 @@ class StatusForbiddenHandler extends BaseHandler
 
         return false;
     }
-
 }

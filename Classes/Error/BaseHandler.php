@@ -15,9 +15,14 @@ namespace Plan2net\Sierrha\Error;
  */
 
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Controller\ErrorPageController;
 use TYPO3\CMS\Core\Error\PageErrorHandler\PageErrorHandlerInterface;
+use TYPO3\CMS\Core\Http\HtmlResponse;
+use TYPO3\CMS\Core\Http\ImmediateResponseException;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -38,6 +43,11 @@ abstract class BaseHandler implements PageErrorHandlerInterface {
 	 */
 	protected $handlerConfiguration;
 
+    /**
+     * @var array
+     */
+    protected $extensionConfiguration;
+
 	/**
 	 * @param int $statusCode
 	 * @param array $configuration
@@ -45,6 +55,12 @@ abstract class BaseHandler implements PageErrorHandlerInterface {
 	public function __construct(int $statusCode, array $configuration) {
 		$this->statusCode = $statusCode;
 		$this->handlerConfiguration = $configuration;
+        try {
+            $this->extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('sierrha');
+        } catch (\Exception $e) {
+            // @todo log configuration error
+            $this->extensionConfiguration = [];
+        }
 	}
 
     /**
@@ -84,6 +100,40 @@ abstract class BaseHandler implements PageErrorHandlerInterface {
             (int)$urlParams['pageuid'],
             ['_language' => $request->getAttribute('language', null)]
         );
+    }
+
+    /**
+     * @param string $message
+     * @param \Throwable $e
+     * @return string
+     * @throws ImmediateResponseException
+     */
+    protected function handleInternalFailure(string $message, \Throwable $e): string
+    {
+        // @todo add logging
+        $title = 'Page Not Found';
+        $exitImmediately = false;
+        if ($this->extensionConfiguration['debugMode']
+            || GeneralUtility::cmpIP(GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+                $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
+            $title .= ': ' . $message;
+            $message = get_class($e) . ': ' . $e->getMessage();
+            if ($e->getCode()) {
+                $message .= ' [code: ' . $e->getCode() . ']';
+            }
+            $exitImmediately = true;
+        }
+        // @todo add detailed debug output
+        $content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
+            $title,
+            $message,
+            AbstractMessage::ERROR
+        );
+        if ($exitImmediately) {
+            throw new ImmediateResponseException(new HtmlResponse($content, 500));
+        }
+
+        return $content;
     }
 
     /**
