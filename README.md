@@ -16,19 +16,10 @@ When the requested URL denotes a web resource (eg .css) only a small response is
 The file extensions to be treated by default as web resources:
 
 * css
-* eot
-* gif
-* ico
-* jpg
-* jpeg
+* eot, ttf, woff, woff2
+* gif, ico, jpg, jpeg, png, svg, webp
 * js
 * json
-* png
-* svg
-* ttf
-* webp
-* woff
-* woff2
 * xml
 
 ### Forbidden (HTTP Status 403)
@@ -45,6 +36,7 @@ In any other case a 404 "not found" error is triggered. TYPO3 will invoke the co
 * TYPO3 9 LTS
 * 404: A page/URL that containes a human readable "page not found" message
 * 403: A URL that performs a login and a redirect to a supplied URL (eg. extension "felogin")
+* the web server must be able to reach itself under the configured domain
 
 ## Installation
 
@@ -111,7 +103,7 @@ Marker | Description
 ###URL### |current URL (URL encoded)
 ###URL_BASE64### | current URL base64 encoded (URL encoded)
 ###ISO_639-1### | current language as two letter ISO code (ISO 639-1)
-###IETF_BCP47### | current language as IETF language tag (IETF BCP 47, RFC 5646/4646/3066/1766) aka hreflang
+###IETF_BCP47### | current language as IETF language tag (IETF BCP 47, RFC 5646/4646/3066/1766) aka "hreflang"
 
 ## Changelog
 
