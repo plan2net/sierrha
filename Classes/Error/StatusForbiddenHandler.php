@@ -46,16 +46,16 @@ class StatusForbiddenHandler extends BaseHandler
     {
         if ($this->isPageGroupAccessDenial($reasons)) {
             return $this->handlePageGroupAccessDenial($request, $message);
-        } else {
-            // trigger "page not found"
-            $response = GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
-                $request,
-                $message,
-                $reasons
-            );
-            // stop further processing to make sure TYPO3 returns 403 and not 404
-            throw new ImmediateResponseException($response);
         }
+
+        // trigger "page not found"
+        $response = GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
+            $request,
+            $message,
+            $reasons
+        );
+        // stop further processing to make sure TYPO3 returns 403 and not 404
+        throw new ImmediateResponseException($response);
     }
 
     /**
@@ -138,13 +138,12 @@ class StatusForbiddenHandler extends BaseHandler
     protected function isLoggedIn(Context $context): bool
     {
         // we're checking also for BE sessions in case a FE user group is simulated
-        if ($context->getPropertyFromAspect('frontend.user', 'isLoggedIn')
+        return $context->getPropertyFromAspect('frontend.user', 'isLoggedIn')
             || ($context->getPropertyFromAspect('backend.user', 'isLoggedIn')
-                && $context->getPropertyFromAspect('frontend.user', 'groupIds')[1] === -2 // special "any group" (simulated)
-            )) {
-            return true;
-        }
-
-        return false;
+                && $context->getPropertyFromAspect(
+                    'frontend.user',
+                    'groupIds'
+                )[1] === -2 // special "any group" (simulated)
+            );
     }
 }
