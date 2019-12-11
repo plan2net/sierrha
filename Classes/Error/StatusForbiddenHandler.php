@@ -122,7 +122,9 @@ class StatusForbiddenHandler extends BaseHandler
         if ($reasons['code'] === PageAccessFailureReasons::ACCESS_DENIED_PAGE_NOT_RESOLVED
             || $reasons['code'] === PageAccessFailureReasons::ACCESS_DENIED_SUBSECTION_NOT_RESOLVED) {
             unset($reasons['code']);
-            if (count($reasons) === 1 && isset($reasons['fe_group'])) {
+            $reasonsCount = count($reasons);
+            if ((($reasonsCount === 1 && isset($reasons['fe_group'])))
+                || ($reasonsCount === 0 && $this->isSimulatedBackendGroup(GeneralUtility::makeInstance(Context::class)))) {
                 return true;
             }
         }
@@ -137,13 +139,20 @@ class StatusForbiddenHandler extends BaseHandler
      */
     protected function isLoggedIn(Context $context): bool
     {
-        // we're checking also for BE sessions in case a FE user group is simulated
         return $context->getPropertyFromAspect('frontend.user', 'isLoggedIn')
-            || ($context->getPropertyFromAspect('backend.user', 'isLoggedIn')
-                && $context->getPropertyFromAspect(
-                    'frontend.user',
-                    'groupIds'
-                )[1] === -2 // special "any group" (simulated)
-            );
+            || $this->isSimulatedBackendGroup($context);
+    }
+
+    /**
+     * @param Context $context
+     * @return bool
+     * @throws \TYPO3\CMS\Core\Context\Exception\AspectNotFoundException
+     */
+    protected function isSimulatedBackendGroup(Context $context): bool
+    {
+        // look for special "any group"
+        return ($context->getPropertyFromAspect('backend.user', 'isLoggedIn')
+            && $context->getPropertyFromAspect('frontend.user', 'groupIds')[1] === -2
+        );
     }
 }
