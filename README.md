@@ -107,7 +107,10 @@ Marker | Description
 
 ## Changelog
 
-* 0.3.1 Add eot, ttf and woff/woff2 to the list of web resources
+* 0.3.3
+  * Add fallbacks for missing error content
+  * Do not throw exceptions in case of configuration errors by default
+* 0.3.2 Add eot, ttf and woff/woff2 to the list of web resources
 * 0.3.0 Show error page for 404 status; send only a small 404 response for missing web resources 
 * 0.2.0 Show error page on missing permission for current login  
 * 0.1.0 Redirect to login page
