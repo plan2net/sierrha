@@ -30,8 +30,8 @@
   },
   "require": {
     "php": "^7.2",
-    "typo3/cms-backend": "^9.5",
-    "typo3/cms-frontend": "^9.5"
+    "typo3/cms-backend": "^9.5 || ^10.4",
+    "typo3/cms-frontend": "^9.5 || ^10.4"
   },
   "require-dev": {
     "typo3/testing-framework": "^4.0"
