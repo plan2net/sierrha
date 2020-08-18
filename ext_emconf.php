@@ -20,8 +20,8 @@ $EM_CONF[$_EXTKEY] = [
     'version' => '0.3.3',
     'constraints' => [
         'depends' => [
-            'backend' => '9.5',
-            'frontend' => '9.5',
+            'backend' => '9.5.0 - 10.4.99',
+            'frontend' => '9.5.0 - 10.4.99',
         ],
         'conflicts' => [],
         'suggests' => [],
