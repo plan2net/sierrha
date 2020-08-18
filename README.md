@@ -107,6 +107,7 @@ Marker | Description
 
 ## Changelog
 
+* 0.3.4 Set as compatible with v10 LTS
 * 0.3.3
   * Add fallbacks for missing error content
   * Do not throw exceptions in case of configuration errors by default
