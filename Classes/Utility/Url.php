@@ -64,7 +64,7 @@ class Url
         try {
             $response = $requestFactory->request($url);
             if ($response->getStatusCode() === 200) {
-                $content = $requestFactory->request($url)->getBody()->getContents();
+                $content = $response->getBody()->getContents();
             } else {
                 // @todo add error logging
             }
