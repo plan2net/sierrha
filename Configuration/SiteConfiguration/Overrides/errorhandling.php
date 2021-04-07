@@ -69,7 +69,7 @@ $GLOBALS['SiteConfiguration']['site_errorhandling']['columns']['tx_sierrha_noPer
 // TYPO3 bug (?): works only when the user changes the value using the value picker, but NOT when changing the value directly in the field  
 $GLOBALS['SiteConfiguration']['site_errorhandling']['columns']['errorCode']['onChange'] = 'reload';
 
-$GLOBALS['SiteConfiguration']['site_errorhandling']['palettes']['tx_sierrha_login'] 
+$GLOBALS['SiteConfiguration']['site_errorhandling']['palettes']['tx_sierrha_login']
     = ['showitem' => 'tx_sierrha_loginPage, tx_sierrha_loginUrlParameter'];
 
 $GLOBALS['SiteConfiguration']['site_errorhandling']['types']['PHP']['showitem'] .= ', tx_sierrha_notFoundContentSource, --palette--;;tx_sierrha_login, tx_sierrha_noPermissionsContentSource';

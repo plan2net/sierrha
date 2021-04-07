@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Plan2net\Sierrha\Error;
 
 /*
- * Copyright 2019 plan2net GmbH
+ * Copyright 2019-2022 plan2net GmbH
  *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
@@ -15,18 +15,17 @@ namespace Plan2net\Sierrha\Error;
  * LICENSE.txt file that was distributed with this source code.
  */
 
-use Psr\Http\Message\ServerRequestInterface;
+use Plan2net\Sierrha\Utility\Url;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Controller\ErrorPageController;
 use TYPO3\CMS\Core\Error\PageErrorHandler\PageErrorHandlerInterface;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Http\ImmediateResponseException;
-use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Site\Entity\Site;
-use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -34,20 +33,29 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 abstract class BaseHandler implements PageErrorHandlerInterface
 {
+    protected const CACHE_IDENTIFIER = 'pages';
+    protected const CACHE_TIME = null; // null = default
+    protected const KEY_PREFIX = ''; // for cache and translations
+
     /**
      * @var int
      */
-    protected $statusCode;
+    protected $statusCode = 0;
 
     /**
      * @var array
      */
-    protected $handlerConfiguration;
+    protected $handlerConfiguration = [];
 
     /**
      * @var array
      */
-    protected $extensionConfiguration;
+    protected $extensionConfiguration = [];
+
+    /**
+     * @var string
+     */
+    protected $typo3Language = 'default';
 
     public function __construct(int $statusCode, array $configuration)
     {
@@ -62,39 +70,39 @@ abstract class BaseHandler implements PageErrorHandlerInterface
     }
 
     /**
-     * Resolve TYPO3 style URL into real world URL, replace language markers for external URL.
-     *
-     * @throws \TYPO3\CMS\Core\Routing\InvalidRouteArgumentsException
+     * Fetches content of URL, returns fallback on error.
      */
-    protected function resolveUrl(ServerRequestInterface $request, string $typoLinkUrl): string
+    protected function fetchUrl(string $url, $pageUid = 0): string
     {
-        $linkService = GeneralUtility::makeInstance(LinkService::class);
-        $urlParams = $linkService->resolve($typoLinkUrl);
-        if ($urlParams['type'] !== 'page' && $urlParams['type'] !== 'url') {
-            throw new \InvalidArgumentException('The error handler accepts only TYPO3 links of type "page" or "url"', 1547651754);
-        }
-        if ($urlParams['type'] === 'url') {
-            /** @var SiteLanguage $siteLanguage */
-            $siteLanguage = $request->getAttribute('language');
-            $resolvedUrl = str_replace(
-                ['###ISO_639-1###', '###IETF_BCP47'],
-                [$siteLanguage->getTwoLetterIsoCode(), $siteLanguage->getHreflang()],
-                $urlParams['url']
-            );
-
-            return $resolvedUrl;
+        try {
+            /** @var FrontendInterface $cache */
+            $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache(static::CACHE_IDENTIFIER);
+            $cacheIdentifier = 'sierrha_' . static::KEY_PREFIX . '_' . md5($url);
+            $cacheContent = $cache->get($cacheIdentifier);
+        } catch (\Exception $e) {
+            $cache = null;
+            $cacheContent = false;
+            // @todo add logging
         }
 
-        /** @var Site $site */
-        $site = $request->getAttribute('site', null);
-        if (!$site instanceof Site) {
-            $site = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId((int)$urlParams['pageuid']);
+        if ($cacheContent) {
+            $content = (string)$cacheContent;
+        } else {
+            /** @var Url $urlUtility */
+            $urlUtility = GeneralUtility::makeInstance(Url::class);
+            $content = $urlUtility->fetchWithFallback($url, $this->getLanguageService(), static::KEY_PREFIX);
+            if ($cache && $content !== '') {
+                /** @todo allow for custom cache lifetime */
+                $cacheTags = ['sierrha'];
+                if ($pageUid > 0) {
+                    // cache tag "pageId_" ensures that cache is purged when content of 404 page changes
+                    $cacheTags[] = 'pageId_' . $this->pageUid;
+                }
+                $cache->set($cacheIdentifier, $content, $cacheTags, static::CACHE_TIME);
+            }
         }
 
-        return (string)$site->getRouter()->generateUri(
-            (int)$urlParams['pageuid'],
-            ['_language' => $request->getAttribute('language', null)]
-        );
+        return $content;
     }
 
     /**
@@ -102,10 +110,10 @@ abstract class BaseHandler implements PageErrorHandlerInterface
      */
     protected function handleInternalFailure(string $message, \Throwable $e): string
     {
-        // @todo add logging
+        /** @todo add logging */
         $title = 'Page Not Found';
         $exitImmediately = false;
-        if ($this->extensionConfiguration['debugMode']
+        if (($this->extensionConfiguration['debugMode'] ?? false)
             || GeneralUtility::cmpIP(GeneralUtility::getIndpEnv('REMOTE_ADDR'),
                 $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
             $title .= ': ' . $message;
@@ -115,7 +123,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
             }
             $exitImmediately = true;
         }
-        // @todo add detailed debug output
+        /** @todo add detailed debug output */
         $content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
             $title,
             $message,
@@ -130,6 +138,17 @@ abstract class BaseHandler implements PageErrorHandlerInterface
 
     protected function getLanguageService(): LanguageService
     {
-        return $GLOBALS['LANG'] ?? GeneralUtility::makeInstance(LanguageService::class);
+        static $languageService = null;
+
+        if (!$languageService) {
+            if (isset($GLOBALS['LANG'])) {
+                $languageService = $GLOBALS['LANG'];
+            } else {
+                $languageService = GeneralUtility::makeInstance(LanguageServiceFactory::class)
+                    ->create($this->typo3Language);
+            }
+        }
+
+        return $languageService;
     }
 }

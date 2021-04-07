@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Plan2net\Sierrha\Error;
 
 /*
- * Copyright 2019 plan2net GmbH
+ * Copyright 2019-2022 plan2net GmbH
  *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
@@ -28,11 +28,11 @@ use TYPO3\CMS\Frontend\Page\PageAccessFailureReasons;
 
 /**
  * An error handler that redirects to a login page.
- *
- * Class StatusForbiddenHandler
  */
 class StatusForbiddenHandler extends BaseHandler
 {
+    protected const KEY_PREFIX = 'noPermissions';
+
     /**
      * @throws \Exception
      */
@@ -68,6 +68,8 @@ class StatusForbiddenHandler extends BaseHandler
                 throw new \InvalidArgumentException('Sierrha-StatusForbiddenHandler called itself in a loop.', 1620737618);
             }
 
+            /** @var Url $urlUtility */
+            $urlUtility = GeneralUtility::makeInstance(Url::class);
             /** @var Context $context */
             $context = GeneralUtility::makeInstance(Context::class);
             // if the user is already logged in, another login with the same account will not resolve the issue
@@ -82,11 +84,18 @@ class StatusForbiddenHandler extends BaseHandler
                     // stop further processing to make sure TYPO3 returns 403 and not 404
                     throw new ImmediateResponseException($response);
                 }
-                $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_noPermissionsContentSource']);
-                $urlUtility = GeneralUtility::makeInstance(Url::class);
-                $response = new HtmlResponse($urlUtility->fetchWithFallback($resolvedUrl, 'noPermissionsTitle', 'noPermissionsDetails'));
+
+                [
+                    'url' => $resolvedUrl,
+                    'typo3language' => $this->typo3Language,
+                    'pageUid' => $pageUid
+                ] = $urlUtility->resolve(
+                    $request,
+                    $this->handlerConfiguration['tx_sierrha_noPermissionsContentSource']
+                );
+                $response = new HtmlResponse($this->fetchUrl($resolvedUrl, $pageUid));
             } else {
-                $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_loginPage']);
+                ['url' => $resolvedUrl] = $urlUtility->resolve($request, $this->handlerConfiguration['tx_sierrha_loginPage']);
                 $requestUri = (string)$request->getUri();
                 $loginParameters = str_replace(
                     ['###URL###', '###URL_BASE64###'],

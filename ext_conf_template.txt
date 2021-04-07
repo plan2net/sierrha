@@ -1,6 +1,5 @@
-
-  # cat=basic; type=string; label=LLL:EXT:sierrha/Resources/Private/Language/locallang_em.xlf:resourceExtensionRegexp
+# cat=basic; type=string; label=LLL:EXT:sierrha/Resources/Private/Language/locallang_em.xlf:resourceExtensionRegexp
 resourceExtensionRegexp = css|eot|gif|ico|jpe?g|js(?:on)|png|svg|ttf|webp|woff2?|xml
 
-  # cat=basic; type=boolean; label=LLL:EXT:sierrha/Resources/Private/Language/locallang_em.xlf:debugMode
+# cat=basic; type=boolean; label=LLL:EXT:sierrha/Resources/Private/Language/locallang_em.xlf:debugMode
 debugMode = 0

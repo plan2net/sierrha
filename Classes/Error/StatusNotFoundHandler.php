@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Plan2net\Sierrha\Error;
 
 /*
- * Copyright 2019 plan2net GmbH
+ * Copyright 2019-2022 plan2net GmbH
  *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
@@ -26,6 +26,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class StatusNotFoundHandler extends BaseHandler
 {
+    protected const KEY_PREFIX = 'pageNotFound';
+
     /**
      * @throws \Exception
      */
@@ -47,9 +49,14 @@ class StatusNotFoundHandler extends BaseHandler
                 && preg_match('/\.(?:' . $this->extensionConfiguration['resourceExtensionRegexp'] . ')$/', $request->getUri()->getPath())) {
                 $content = $this->getLanguageService()->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:resourceNotFound');
             } else {
-                $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_notFoundContentSource']);
+                /** @var Url $urlUtility */
                 $urlUtility = GeneralUtility::makeInstance(Url::class);
-                $content = $urlUtility->fetchWithFallback($resolvedUrl, 'pageNotFoundTitle', 'pageNotFoundDetails');
+                [
+                    'url' => $resolvedUrl,
+                    'typo3language' => $this->typo3Language,
+                    'pageUid' => $pageUid
+                ] = $urlUtility->resolve($request, $this->handlerConfiguration['tx_sierrha_notFoundContentSource']);
+                $content = $this->fetchUrl($resolvedUrl, $pageUid);
             }
         } catch (\Exception $e) {
             $content = $this->handleInternalFailure($message, $e);

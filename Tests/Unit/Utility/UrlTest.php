@@ -10,9 +10,6 @@ use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Controller\ErrorPageController;
 
-/**
- * @backupGlobals enabled
- */
 class UrlTest extends UnitTestCase
 {
 
@@ -25,13 +22,15 @@ class UrlTest extends UnitTestCase
      */
     protected $sut;
 
-    protected function setUp()
+    /** @var LanguageService */
+    protected $languageServiceStub;
+
+    protected function setUp(): void
     {
         $this->sut = new Url();
 
-        $languageServiceStub = $this->createMock(LanguageService::class);
-        $languageServiceStub->method('sL')->willReturn('lorem ipsum');
-        $GLOBALS['LANG'] = $languageServiceStub;
+        $this->languageServiceStub = $this->createMock(LanguageService::class);
+        $this->languageServiceStub->method('sL')->willReturn('lorem ipsum');
     }
 
     protected function setupErrorPageControllerStub()
@@ -71,7 +70,7 @@ class UrlTest extends UnitTestCase
 
         $this->setupRequestFactoryStub(new Response($this->buildResponseBody('SERVER ERROR TEXT'), 500)); // anything but 200
 
-        $result = $this->sut->fetchWithFallback('http://foo.bar/', '', '');
+        $result = $this->sut->fetchWithFallback('http://foo.bar/', $this->languageServiceStub, '');
         $this->assertEquals(self::ERROR_PAGE_CONTROLLER_CONTENT, $result);
     }
 
@@ -84,7 +83,7 @@ class UrlTest extends UnitTestCase
 
         $this->setupRequestFactoryStub(new Response()); // will return an empty string
 
-        $result = $this->sut->fetchWithFallback('http://foo.bar/', '', '');
+        $result = $this->sut->fetchWithFallback('http://foo.bar/', $this->languageServiceStub, '');
         $this->assertEquals(self::ERROR_PAGE_CONTROLLER_CONTENT, $result);
     }
 
@@ -97,7 +96,7 @@ class UrlTest extends UnitTestCase
 
         $this->setupRequestFactoryStub(new Response($this->buildResponseBody(' <h1> </h1> ')));
 
-        $result = $this->sut->fetchWithFallback('http://foo.bar/', '', '');
+        $result = $this->sut->fetchWithFallback('http://foo.bar/', $this->languageServiceStub, '');
         $this->assertEquals(self::ERROR_PAGE_CONTROLLER_CONTENT, $result);
     }
 
@@ -109,7 +108,7 @@ class UrlTest extends UnitTestCase
         $errorPageContent = 'CUSTOM ERROR PAGE TEXT';
         $this->setupRequestFactoryStub(new Response($this->buildResponseBody($errorPageContent)));
 
-        $result = $this->sut->fetchWithFallback('http://foo.bar/', '', '');
+        $result = $this->sut->fetchWithFallback('http://foo.bar/', $this->languageServiceStub, '');
         $this->assertEquals($errorPageContent, $result);
     }
 }
