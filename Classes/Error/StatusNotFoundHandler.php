@@ -53,7 +53,7 @@ class StatusNotFoundHandler extends BaseHandler
                 $urlUtility = GeneralUtility::makeInstance(Url::class);
                 [
                     'url' => $resolvedUrl,
-                    'typo3language' => $this->typo3Language,
+                    'typo3Language' => $this->typo3Language,
                     'pageUid' => $pageUid
                 ] = $urlUtility->resolve($request, $this->handlerConfiguration['tx_sierrha_notFoundContentSource']);
                 $content = $this->fetchUrl($resolvedUrl, $pageUid);

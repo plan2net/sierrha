@@ -87,7 +87,7 @@ class StatusForbiddenHandler extends BaseHandler
 
                 [
                     'url' => $resolvedUrl,
-                    'typo3language' => $this->typo3Language,
+                    'typo3Language' => $this->typo3Language,
                     'pageUid' => $pageUid
                 ] = $urlUtility->resolve(
                     $request,
