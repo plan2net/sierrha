@@ -72,7 +72,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
     /**
      * Fetches content of URL, returns fallback on error.
      */
-    protected function fetchUrl(string $url, $pageUid = 0): string
+    protected function fetchUrl(string $url, int $pageUid = 0): string
     {
         try {
             /** @var FrontendInterface $cache */
@@ -96,7 +96,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
                 $cacheTags = ['sierrha'];
                 if ($pageUid > 0) {
                     // cache tag "pageId_" ensures that cache is purged when content of 404 page changes
-                    $cacheTags[] = 'pageId_' . $this->pageUid;
+                    $cacheTags[] = 'pageId_' . $pageUid;
                 }
                 $cache->set($cacheIdentifier, $content, $cacheTags, static::CACHE_TIME);
             }
