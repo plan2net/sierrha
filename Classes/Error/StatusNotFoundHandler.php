@@ -42,6 +42,9 @@ class StatusNotFoundHandler extends BaseHandler
             if (empty($this->handlerConfiguration['tx_sierrha_notFoundContentSource'])) {
                 throw new \InvalidArgumentException('Sierrha-StatusNotFoundHandler needs to have a content URL set.', 1547651257);
             }
+            if ($request->getHeader('x-sierrha')) {
+                throw new \InvalidArgumentException('Sierrha-StatusNotFoundHandler called itself in a loop.', 1620737618);
+            }
 
             // don't show pretty error page for web resources
             if (!empty($this->extensionConfiguration['resourceExtensionRegexp']
