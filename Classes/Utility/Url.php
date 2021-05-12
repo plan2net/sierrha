@@ -14,7 +14,6 @@ namespace Plan2net\Sierrha\Utility;
  * LICENSE.txt file that was distributed with this source code.
  */
 
-use GuzzleHttp\Cookie\CookieJar;
 use TYPO3\CMS\Core\Controller\ErrorPageController;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;

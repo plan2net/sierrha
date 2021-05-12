@@ -107,6 +107,8 @@ Marker | Description
 
 ## Changelog
 
+* 0.3.7 Prevent 403 handler from getting caught in a loop
+* 0.3.6 Prevent 404 handler from getting caught in a loop
 * 0.3.5 Don't fetch error page twice
 * 0.3.4 Set as compatible with v10 LTS
 * 0.3.3

@@ -73,6 +73,9 @@ class StatusForbiddenHandler extends BaseHandler
             if (empty($this->handlerConfiguration['tx_sierrha_loginPage'])) {
                 throw new \InvalidArgumentException('Sierrha-StatusForbiddenHandler needs to have a login page URL set.', 1547651257);
             }
+            if ($request->getHeader('x-sierrha')) {
+                throw new \InvalidArgumentException('Sierrha-StatusForbiddenHandler called itself in a loop.', 1620737618);
+            }
 
             /** @var Context $context */
             $context = GeneralUtility::makeInstance(Context::class);
