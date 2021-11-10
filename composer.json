@@ -40,5 +40,10 @@
     "psr-4": {
       "Plan2net\\Sierrha\\": "Classes/"
     }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "sierrha"
+    }
   }
 }
