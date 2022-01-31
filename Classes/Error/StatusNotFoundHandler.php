@@ -43,8 +43,8 @@ class StatusNotFoundHandler extends BaseHandler
             }
 
             // don't show pretty error page for web resources
-            if (!empty($this->extensionConfiguration['resourceExtensionRegexp']
-                && preg_match('/\.(?:' . $this->extensionConfiguration['resourceExtensionRegexp'] . ')$/', $request->getUri()->getPath()))) {
+            if (!empty($this->extensionConfiguration['resourceExtensionRegexp'])
+                && preg_match('/\.(?:' . $this->extensionConfiguration['resourceExtensionRegexp'] . ')$/', $request->getUri()->getPath())) {
                 $content = $this->getLanguageService()->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:resourceNotFound');
             } else {
                 $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_notFoundContentSource']);
