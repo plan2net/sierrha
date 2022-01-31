@@ -1,6 +1,6 @@
 # Ṣıẹrrḥa - Site Error Handler
 
-A set of error handlers that extends TYPO3's default site error handling (work in progress).
+A set of error handlers that extends TYPO3's default site error handling.
 
 ## Available Handlers
 
@@ -8,9 +8,9 @@ A set of error handlers that extends TYPO3's default site error handling (work i
 
 Shows content from a page or external URL.
 
-If the resource is unavailable or the content is empty, a message in the standard TYPO3 error layout is shown.
+If the resource is unavailable or the content is empty a message in the standard TYPO3 error layout is shown.
 
-When the requested URL denotes a web resource (eg a CSS file) only a small response is sent to save bandwidth
+When the requested URL denotes a web resource (eg .css) only a small response is sent to save bandwidth
 ("Regular expression for resource file extensions", see [Extension Manager Configuration][em]).
 
 The file extensions to be treated by default as web resources:
@@ -24,22 +24,17 @@ The file extensions to be treated by default as web resources:
 
 ### Forbidden (HTTP Status 403)
 
-Redirects to a login URL if access to page without a session is not permitted.
+Redirects to a login URL if access to page without session is not permitted.
 
 If the user is already logged in, but has no access because of missing group rights he will be optionally redirected to
 a fallback page ("Show Content from Page on Missing Permissions", see [Site Configuration][site]).
 
 In any other case a 404 "not found" error is triggered. TYPO3 will invoke the configured error handler.
 
-## Caching
-
-The error pages are cached in the page cache of TYPO3. If TYPO3 pages are configured (and not external URLs)
-then the cache is invalidated automatically if the page content changes.
-
 ## Requirements
 
-* TYPO3 9 LTS or 10 LTS
-* 404: A page/URL that contains a human-readable "page not found" message
+* TYPO3 9 LTS
+* 404: A page/URL that containes a human readable "page not found" message
 * 403: A URL that performs a login and a redirect to a supplied URL (eg. extension "felogin")
 * the web server must be able to reach itself under the configured domain
 
@@ -66,7 +61,7 @@ This is the default regular expression.
 _Enable Debug Mode_:
 
 In case of configuration errors a detailed error will be shown when in _debug mode_ or if the HTTP request comes from an
-IP listed in `$GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']`. Otherwise, the error will be passed on to be handled by
+IP listed in `$GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']`. Otherwise the error will be passed on to be handled by
 TYPO3.
 
 ## Site Configuration
@@ -112,7 +107,9 @@ Marker | Description
 
 ## Changelog
 
-* 0.4.0 Error pages are cached in TYPO3's page cache
+* 0.4.0
+    * Error pages are cached in TYPO3's page cache
+    * Set as compatible with v11 LTS
 * 0.3.8 Add extension-key to composer.json
 * 0.3.7 Prevent 403 handler from getting caught in a loop
 * 0.3.6 Prevent 404 handler from getting caught in a loop

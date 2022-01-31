@@ -21,20 +21,23 @@
     {
       "name": "plan2net GmbH",
       "email": "office@plan2.net",
-      "homepage": "http://www.plan2.net"
+      "homepage": "https://www.plan2.net"
     }
   ],
+  "replace": {
+    "typo3-ter/sierrha": "self.version"
+  },
   "support": {
     "issues": "https://github.com/plan2net/sierrha/issues",
     "source": "https://github.com/plan2net/sierrha/"
   },
   "require": {
     "php": "^7.2",
-    "typo3/cms-backend": "^9.5 || ^10.4",
-    "typo3/cms-frontend": "^9.5 || ^10.4"
+    "typo3/cms-backend": "^9.5 || ^10.4 || ^11.5",
+    "typo3/cms-frontend": "^9.5 || ^10.4 || ^11.5"
   },
   "require-dev": {
-    "typo3/testing-framework": "^4.0"
+    "typo3/testing-framework": "^4.0 || ^6.0"
   },
   "autoload": {
     "psr-4": {

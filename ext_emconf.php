@@ -7,12 +7,12 @@ $EM_CONF[$_EXTKEY] = [
     'author' => 'plan2net TYPO3 development team',
     'author_email' => 'office@plan2.net',
     'author_company' => 'plan2net GmbH',
-    'state' => 'beta',
-    'version' => '0.3.8',
+    'state' => 'stable',
+    'version' => '0.4.0',
     'constraints' => [
         'depends' => [
-            'backend' => '9.5.0 - 10.4.99',
-            'frontend' => '9.5.0 - 10.4.99',
+            'backend' => '9.5.0 - 11.5.99',
+            'frontend' => '9.5.0 - 11.5.99',
         ],
         'conflicts' => [],
         'suggests' => [],
