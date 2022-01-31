@@ -41,6 +41,11 @@
       "Plan2net\\Sierrha\\": "Classes/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Plan2net\\Sierrha\\Tests\\": "Tests/"
+    }
+  },
   "extra": {
     "typo3/cms": {
       "extension-key": "sierrha"
