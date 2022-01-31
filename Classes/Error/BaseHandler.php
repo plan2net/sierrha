@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Plan2net\Sierrha\Error;
 
 /*
  * Copyright 2019 plan2net GmbH
- * 
+ *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
  * of the License, or any later version.
@@ -23,17 +24,16 @@ use TYPO3\CMS\Core\Http\ImmediateResponseException;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * A foundation class for error handlers.
  */
 abstract class BaseHandler implements PageErrorHandlerInterface
 {
-
     /**
      * @var int
      */
@@ -49,11 +49,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
      */
     protected $extensionConfiguration;
 
-	/**
-	 * @param int $statusCode
-	 * @param array $configuration
-	 */
-	public function __construct(int $statusCode, array $configuration)
+    public function __construct(int $statusCode, array $configuration)
     {
         $this->statusCode = $statusCode;
         $this->handlerConfiguration = $configuration;
@@ -63,14 +59,11 @@ abstract class BaseHandler implements PageErrorHandlerInterface
             // @todo log configuration error
             $this->extensionConfiguration = [];
         }
-	}
+    }
 
     /**
-     * Resolve TYPO3 style URL into real world URL, replace language markers for external URL
+     * Resolve TYPO3 style URL into real world URL, replace language markers for external URL.
      *
-     * @param ServerRequestInterface $request
-     * @param string                 $typoLinkUrl
-     * @return string
      * @throws \TYPO3\CMS\Core\Routing\InvalidRouteArgumentsException
      */
     protected function resolveUrl(ServerRequestInterface $request, string $typoLinkUrl): string
@@ -81,7 +74,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
             throw new \InvalidArgumentException('The error handler accepts only TYPO3 links of type "page" or "url"', 1547651754);
         }
         if ($urlParams['type'] === 'url') {
-            /* @var $siteLanguage SiteLanguage */
+            /** @var SiteLanguage $siteLanguage */
             $siteLanguage = $request->getAttribute('language');
             $resolvedUrl = str_replace(
                 ['###ISO_639-1###', '###IETF_BCP47'],
@@ -92,7 +85,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
             return $resolvedUrl;
         }
 
-        /* @var $site Site */
+        /** @var Site $site */
         $site = $request->getAttribute('site', null);
         if (!$site instanceof Site) {
             $site = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId((int)$urlParams['pageuid']);
@@ -105,9 +98,6 @@ abstract class BaseHandler implements PageErrorHandlerInterface
     }
 
     /**
-     * @param string $message
-     * @param \Throwable $e
-     * @return string
      * @throws ImmediateResponseException
      */
     protected function handleInternalFailure(string $message, \Throwable $e): string
@@ -138,9 +128,6 @@ abstract class BaseHandler implements PageErrorHandlerInterface
         return $content;
     }
 
-    /**
-     * @return LanguageService
-     */
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'] ?? GeneralUtility::makeInstance(LanguageService::class);

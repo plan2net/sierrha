@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Plan2net\Sierrha\Error;
 
 /*
  * Copyright 2019 plan2net GmbH
- * 
+ *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
  * of the License, or any later version.
@@ -25,12 +26,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class StatusNotFoundHandler extends BaseHandler
 {
-
     /**
-     * @param ServerRequestInterface $request
-     * @param string                 $message
-     * @param array                  $reasons
-     * @return ResponseInterface
      * @throws \Exception
      */
     public function handlePageError(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface
@@ -48,7 +44,7 @@ class StatusNotFoundHandler extends BaseHandler
 
             // don't show pretty error page for web resources
             if (!empty($this->extensionConfiguration['resourceExtensionRegexp']
-                && preg_match('/\.(?:'.$this->extensionConfiguration['resourceExtensionRegexp'].')$/', $request->getUri()->getPath()))) {
+                && preg_match('/\.(?:' . $this->extensionConfiguration['resourceExtensionRegexp'] . ')$/', $request->getUri()->getPath()))) {
                 $content = $this->getLanguageService()->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:resourceNotFound');
             } else {
                 $resolvedUrl = $this->resolveUrl($request, $this->handlerConfiguration['tx_sierrha_notFoundContentSource']);

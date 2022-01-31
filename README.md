@@ -107,6 +107,7 @@ Marker | Description
 
 ## Changelog
 
+* 0.3.8 Add extension-key to composer.json
 * 0.3.7 Prevent 403 handler from getting caught in a loop
 * 0.3.6 Prevent 404 handler from getting caught in a loop
 * 0.3.5 Don't fetch error page twice

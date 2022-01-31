@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Plan2net\Sierrha\Error;
 
 /*
  * Copyright 2019 plan2net GmbH
- * 
+ *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
  * of the License, or any later version.
@@ -29,17 +30,10 @@ use TYPO3\CMS\Frontend\Page\PageAccessFailureReasons;
  * An error handler that redirects to a login page.
  *
  * Class StatusForbiddenHandler
- *
- * @package Plan2net\Sierrha\Error
  */
 class StatusForbiddenHandler extends BaseHandler
 {
-
     /**
-     * @param ServerRequestInterface $request
-     * @param string                 $message
-     * @param array                  $reasons
-     * @return ResponseInterface
      * @throws \Exception
      */
     public function handlePageError(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface
@@ -59,9 +53,6 @@ class StatusForbiddenHandler extends BaseHandler
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param string                 $message
-     * @return ResponseInterface
      * @throws \Exception
      */
     protected function handlePageGroupAccessDenial(ServerRequestInterface $request, string $message): ResponseInterface
@@ -102,7 +93,7 @@ class StatusForbiddenHandler extends BaseHandler
                     [rawurlencode($requestUri), rawurlencode(base64_encode($requestUri))],
                     $this->handlerConfiguration['tx_sierrha_loginUrlParameter']
                 );
-                $response = new RedirectResponse($resolvedUrl.(strpos($resolvedUrl, '?') === false ? '?' : '&').$loginParameters);
+                $response = new RedirectResponse($resolvedUrl . (strpos($resolvedUrl, '?') === false ? '?' : '&') . $loginParameters);
             }
         } catch (ImmediateResponseException $e) {
             throw $e;
@@ -113,10 +104,6 @@ class StatusForbiddenHandler extends BaseHandler
         return $response;
     }
 
-    /**
-     * @param array $reasons
-     * @return bool
-     */
     protected function isPageGroupAccessDenial(array $reasons): bool
     {
         if (!isset($reasons['code'])) {
@@ -136,8 +123,6 @@ class StatusForbiddenHandler extends BaseHandler
     }
 
     /**
-     * @param Context $context
-     * @return bool
      * @throws \TYPO3\CMS\Core\Context\Exception\AspectNotFoundException
      */
     protected function isLoggedIn(Context $context): bool
@@ -147,15 +132,12 @@ class StatusForbiddenHandler extends BaseHandler
     }
 
     /**
-     * @param Context $context
-     * @return bool
      * @throws \TYPO3\CMS\Core\Context\Exception\AspectNotFoundException
      */
     protected function isSimulatedBackendGroup(Context $context): bool
     {
         // look for special "any group"
-        return ($context->getPropertyFromAspect('backend.user', 'isLoggedIn')
-            && $context->getPropertyFromAspect('frontend.user', 'groupIds')[1] === -2
-        );
+        return $context->getPropertyFromAspect('backend.user', 'isLoggedIn')
+            && $context->getPropertyFromAspect('frontend.user', 'groupIds')[1] === -2;
     }
 }

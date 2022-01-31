@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Plan2net\Sierrha\Utility;
 
 /*
  * Copyright 2019 plan2net GmbH
- * 
+ *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
  * of the License, or any later version.
@@ -24,39 +25,32 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class Url
 {
-
     /**
-     * Fetches content of URL, returns fallback on error
-     *
-     * @param string $url
-     * @param string $fallbackLabelTitle
-     * @param string $fallbackLabelDetails
-     * @return string
+     * Fetches content of URL, returns fallback on error.
      */
     public function fetchWithFallback(string $url, string $fallbackLabelTitle, string $fallbackLabelDetails): string
     {
         $content = $this->fetch($url);
         if (trim(strip_tags($content)) === '') {
-            // an empty message is considered an error
-            // @todo add error logging
+            /**
+             * An empty message is considered an error.
+             *
+             * @todo add error logging
+             */
             $content = '';
         }
 
         if ($content === '') {
             $languageService = $this->getLanguageService();
             $content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
-                $languageService->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:'.$fallbackLabelTitle),
-                $languageService->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:'.$fallbackLabelDetails)
+                $languageService->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:' . $fallbackLabelTitle),
+                $languageService->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:' . $fallbackLabelDetails)
             );
         }
 
         return $content;
     }
 
-    /**
-     * @param string $url
-     * @return string
-     */
     protected function fetch(string $url): string
     {
         $content = '';
@@ -75,9 +69,6 @@ class Url
         return $content;
     }
 
-    /**
-     * @return LanguageService
-     */
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'] ?? GeneralUtility::makeInstance(LanguageService::class);

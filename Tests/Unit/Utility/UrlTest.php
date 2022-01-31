@@ -16,7 +16,7 @@ use TYPO3\CMS\Core\Controller\ErrorPageController;
 class UrlTest extends UnitTestCase
 {
 
-    const ERROR_PAGE_CONTROLLER_CONTENT = 'FALLBACK ERROR TEXT';
+    protected const ERROR_PAGE_CONTROLLER_CONTENT = 'FALLBACK ERROR TEXT';
 
     /**
      * System Under Test
