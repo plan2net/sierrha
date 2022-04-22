@@ -36,10 +36,10 @@ class UrlTest extends UnitTestCase
     protected function setupErrorPageControllerStub()
     {
         $errorPageControllerStub = $this->getMockBuilder(ErrorPageController::class)
-                                        ->disableOriginalConstructor()
-                                        ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
         $errorPageControllerStub->method('errorAction')
-                                ->willReturn(self::ERROR_PAGE_CONTROLLER_CONTENT);
+            ->willReturn(self::ERROR_PAGE_CONTROLLER_CONTENT);
         GeneralUtility::addInstance(ErrorPageController::class, $errorPageControllerStub);
     }
 
@@ -68,7 +68,9 @@ class UrlTest extends UnitTestCase
     {
         $this->setupErrorPageControllerStub();
 
-        $this->setupRequestFactoryStub(new Response($this->buildResponseBody('SERVER ERROR TEXT'), 500)); // anything but 200
+        $this->setupRequestFactoryStub(
+            new Response($this->buildResponseBody('SERVER ERROR TEXT'), 500)
+        ); // anything but 200
 
         $result = $this->sut->fetchWithFallback('http://foo.bar/', $this->languageServiceStub, '');
         $this->assertEquals(self::ERROR_PAGE_CONTROLLER_CONTENT, $result);

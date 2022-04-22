@@ -129,4 +129,5 @@ Marker | Description
 * 0.1.0 Redirect to login page
 
 [em]: #extension-manager-configuration
+
 [site]: #site-configuration

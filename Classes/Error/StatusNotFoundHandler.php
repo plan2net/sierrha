@@ -31,23 +31,38 @@ class StatusNotFoundHandler extends BaseHandler
     /**
      * @throws \Exception
      */
-    public function handlePageError(ServerRequestInterface $request, string $message, array $reasons = []): ResponseInterface
-    {
+    public function handlePageError(
+        ServerRequestInterface $request,
+        string $message,
+        array $reasons = []
+    ): ResponseInterface {
         try {
             if ($this->statusCode !== 404) {
-                throw new \InvalidArgumentException('Sierrha-StatusNotFoundHandler only handles status 404.', 1548963650);
+                throw new \InvalidArgumentException(
+                    'Sierrha-StatusNotFoundHandler only handles status 404.', 1548963650
+                );
             }
             if (empty($this->handlerConfiguration['tx_sierrha_notFoundContentSource'])) {
-                throw new \InvalidArgumentException('Sierrha-StatusNotFoundHandler needs to have a content URL set.', 1547651257);
+                throw new \InvalidArgumentException(
+                    'Sierrha-StatusNotFoundHandler needs to have a content URL set.',
+                    1547651257
+                );
             }
             if ($request->getHeader('x-sierrha')) {
-                throw new \InvalidArgumentException('Sierrha-StatusNotFoundHandler called itself in a loop.', 1620737618);
+                throw new \InvalidArgumentException(
+                    'Sierrha-StatusNotFoundHandler called itself in a loop.', 1620737618
+                );
             }
 
             // don't show pretty error page for web resources
             if (!empty($this->extensionConfiguration['resourceExtensionRegexp'])
-                && preg_match('/\.(?:' . $this->extensionConfiguration['resourceExtensionRegexp'] . ')$/', $request->getUri()->getPath())) {
-                $content = $this->getLanguageService()->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:resourceNotFound');
+                && preg_match(
+                    '/\.(?:' . $this->extensionConfiguration['resourceExtensionRegexp'] . ')$/',
+                    $request->getUri()->getPath()
+                )) {
+                $content = $this->getLanguageService()->sL(
+                    'LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:resourceNotFound'
+                );
             } else {
                 /** @var Url $urlUtility */
                 $urlUtility = GeneralUtility::makeInstance(Url::class);

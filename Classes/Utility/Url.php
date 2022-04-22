@@ -46,7 +46,10 @@ class Url
         $linkService = GeneralUtility::makeInstance(LinkService::class);
         $urlParams = $linkService->resolve($typoLinkUrl);
         if ($urlParams['type'] !== 'page' && $urlParams['type'] !== 'url') {
-            throw new \InvalidArgumentException('The error handler accepts only TYPO3 links of type "page" or "url"', 1547651754);
+            throw new \InvalidArgumentException(
+                'The error handler accepts only TYPO3 links of type "page" or "url"',
+                1547651754
+            );
         }
 
         /** @var SiteLanguage $language */
@@ -86,9 +89,15 @@ class Url
     {
         $content = $this->getContent($url);
         if ($content === '') {
-            $content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
-                $languageService->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:' . $labelPrefix . 'Title'),
-                $languageService->sL('LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:' . $labelPrefix . 'Details')
+            /** @var ErrorPageController $controller */
+            $controller = GeneralUtility::makeInstance(ErrorPageController::class);
+            $content = $controller->errorAction(
+                $languageService->sL(
+                    'LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:' . $labelPrefix . 'Title'
+                ),
+                $languageService->sL(
+                    'LLL:EXT:sierrha/Resources/Private/Language/locallang.xlf:' . $labelPrefix . 'Details'
+                )
             );
         }
 

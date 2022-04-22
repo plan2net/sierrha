@@ -114,8 +114,10 @@ abstract class BaseHandler implements PageErrorHandlerInterface
         $title = 'Page Not Found';
         $exitImmediately = false;
         if (($this->extensionConfiguration['debugMode'] ?? false)
-            || GeneralUtility::cmpIP(GeneralUtility::getIndpEnv('REMOTE_ADDR'),
-                $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask'])) {
+            || GeneralUtility::cmpIP(
+                GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+                $GLOBALS['TYPO3_CONF_VARS']['SYS']['devIPmask']
+            )) {
             $title .= ': ' . $message;
             $message = get_class($e) . ': ' . $e->getMessage();
             if ($e->getCode()) {
@@ -124,7 +126,9 @@ abstract class BaseHandler implements PageErrorHandlerInterface
             $exitImmediately = true;
         }
         /** @todo add detailed debug output */
-        $content = GeneralUtility::makeInstance(ErrorPageController::class)->errorAction(
+        /** @var ErrorPageController $controller */
+        $controller = GeneralUtility::makeInstance(ErrorPageController::class);
+        $content = $controller->errorAction(
             $title,
             $message,
             AbstractMessage::ERROR
