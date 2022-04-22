@@ -6,22 +6,23 @@
   "keywords": [
     "typo3",
     "extension",
-    "site",
-    "page",
-    "error",
-    "handler",
-    "http",
-    "status",
-    "403",
-    "404",
-    "forbidden",
-    "not found"
+    "site configuration",
+    "error page",
+    "error handler",
+    "http status 403",
+    "http status 404",
+    "http error forbidden",
+    "http error not found"
   ],
   "authors": [
     {
       "name": "plan2net GmbH",
       "email": "office@plan2.net",
       "homepage": "https://www.plan2.net"
+    },
+    {
+      "name": "Martin Kutschker",
+      "role": "developer"
     }
   ],
   "replace": {
