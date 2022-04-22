@@ -42,6 +42,7 @@ class Url
             'typo3Language' => 'default',
             'pageUid' => 0
         ];
+        $languageCodes = ['', ''];
 
         $linkService = GeneralUtility::makeInstance(LinkService::class);
         $urlParams = $linkService->resolve($typoLinkUrl);
@@ -54,12 +55,15 @@ class Url
 
         /** @var SiteLanguage $language */
         $language = $request->getAttribute('language');
-        $value['typo3Language'] = $language->getTypo3Language();
+        if ($language instanceof SiteLanguage) {
+            $value['typo3Language'] = $language->getTypo3Language();
+            $languageCodes = [$language->getTwoLetterIsoCode(), $language->getHreflang()];
+        }
 
         if ($urlParams['type'] === 'url') {
             $value['url'] = str_replace(
                 ['###ISO_639-1###', '###IETF_BCP47###'],
-                [$language->getTwoLetterIsoCode(), $language->getHreflang()],
+                $languageCodes,
                 $urlParams['url']
             );
 
