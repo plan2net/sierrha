@@ -127,7 +127,7 @@ class Url
             } else {
                 // @todo add error logging
             }
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             // @todo add error logging
         }
 

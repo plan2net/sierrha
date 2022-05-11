@@ -117,7 +117,7 @@ class StatusForbiddenHandler extends BaseHandler
                     $this->handlerConfiguration['tx_sierrha_loginUrlParameter']
                 );
                 $response = new RedirectResponse(
-                    $resolvedUrl . (strpos($resolvedUrl, '?') === false ? '?' : '&') . $loginParameters
+                    $resolvedUrl . (strpos((string)$resolvedUrl, '?') === false ? '?' : '&') . $loginParameters
                 );
             }
         } catch (ImmediateResponseException $e) {

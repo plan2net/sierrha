@@ -43,7 +43,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
     protected $statusCode = 0;
 
     /**
-     * @var array
+     * @var mixed[]
      */
     protected $handlerConfiguration = [];
 
@@ -57,13 +57,13 @@ abstract class BaseHandler implements PageErrorHandlerInterface
      */
     protected $typo3Language = 'default';
 
-    public function __construct(int $statusCode, array $configuration)
+    public function __construct(int $statusCode, array $handlerConfiguration)
     {
         $this->statusCode = $statusCode;
-        $this->handlerConfiguration = $configuration;
+        $this->handlerConfiguration = $handlerConfiguration;
         try {
             $this->extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('sierrha');
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             // @todo log configuration error
             $this->extensionConfiguration = [];
         }
@@ -79,7 +79,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
             $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache(static::CACHE_IDENTIFIER);
             $cacheIdentifier = 'sierrha_' . static::KEY_PREFIX . '_' . md5($url);
             $cacheContent = $cache->get($cacheIdentifier);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $cache = null;
             $cacheContent = false;
             // @todo add logging

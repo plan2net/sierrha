@@ -33,7 +33,7 @@
     "source": "https://github.com/plan2net/sierrha/"
   },
   "require": {
-    "php": "^7.2",
+    "php": "^7.2 || ^8.1",
     "typo3/cms-backend": "^9.5 || ^10.4 || ^11.5",
     "typo3/cms-frontend": "^9.5 || ^10.4 || ^11.5"
   },
