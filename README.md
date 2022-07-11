@@ -112,6 +112,7 @@ Marker | Description
 
 ## Changelog
 
+* 0.4.2 PHP 8.1 compatible release
 * 0.4.1 Prevent exception when language not available from request
 * 0.4.0
     * Error pages are cached in TYPO3's page cache
