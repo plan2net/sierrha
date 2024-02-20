@@ -32,6 +32,7 @@ use TYPO3\CMS\Frontend\Page\PageAccessFailureReasons;
 class StatusForbiddenHandler extends BaseHandler
 {
     protected const KEY_PREFIX = 'noPermissions';
+    protected array $reasons = [];
 
     /**
      * @throws \Exception
@@ -41,6 +42,7 @@ class StatusForbiddenHandler extends BaseHandler
         string $message,
         array $reasons = []
     ): ResponseInterface {
+        $this->reasons = $reasons;
         if ($this->isPageGroupAccessDenial($reasons)) {
             return $this->handlePageGroupAccessDenial($request, $message);
         }
@@ -102,13 +104,15 @@ class StatusForbiddenHandler extends BaseHandler
                     'pageUid' => $pageUid
                 ] = $urlUtility->resolve(
                     $request,
-                    $this->handlerConfiguration['tx_sierrha_noPermissionsContentSource']
+                    $this->handlerConfiguration['tx_sierrha_noPermissionsContentSource'],
+                    $this->reasons
                 );
                 $response = new HtmlResponse($this->fetchUrl($resolvedUrl, $pageUid));
             } else {
                 ['url' => $resolvedUrl] = $urlUtility->resolve(
                     $request,
-                    $this->handlerConfiguration['tx_sierrha_loginPage']
+                    $this->handlerConfiguration['tx_sierrha_loginPage'],
+                    $this->reasons
                 );
                 $requestUri = (string)$request->getUri();
                 $loginParameters = str_replace(
@@ -138,7 +142,7 @@ class StatusForbiddenHandler extends BaseHandler
             || $reasons['code'] === PageAccessFailureReasons::ACCESS_DENIED_SUBSECTION_NOT_RESOLVED) {
             unset($reasons['code']);
             $reasonsCount = count($reasons);
-            if ((($reasonsCount === 1 && isset($reasons['fe_group'])))
+            if ((($reasonsCount >= 1 && isset($reasons['fe_group'])))
                 || ($reasonsCount === 0 && $this->isSimulatedBackendGroup(
                         GeneralUtility::makeInstance(Context::class)
                     ))) {

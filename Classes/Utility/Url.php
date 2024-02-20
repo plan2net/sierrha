@@ -35,7 +35,7 @@ class Url
      *
      * @throws \TYPO3\CMS\Core\Routing\InvalidRouteArgumentsException
      */
-    public function resolve(ServerRequestInterface $request, string $typoLinkUrl): array
+    public function resolve(ServerRequestInterface $request, string $typoLinkUrl, array $reasons = []): array
     {
         $value = [
             'url' => '',
