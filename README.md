@@ -38,7 +38,7 @@ then the cache is invalidated automatically if the page content changes.
 
 ## Requirements
 
-* TYPO3 9 LTS, 10 LTS or 11 LTS
+* TYPO3 9 LTS, 10 LTS, 11 LTS, 12 LTS
 * 404: A page/URL that contains a human-readable "page not found" message
 * 403: A URL that performs a login and a redirect to a supplied URL (eg. extension "felogin")
 * the web server must be able to reach itself under the configured domain
@@ -75,26 +75,26 @@ TYPO3.
 
 On tab "Error Handling" create a new handler.
 
-**HTTP Error Status Code:** "404"  
+**HTTP Error Status Code:** "404"
 **How to handle Errors:** "PHP Class"
 
 Save the configuration.
 
-**ErrorHandler Class Target (FQCN):** "Plan2net\Sierrha\Error\StatusNotFoundHandler"  
+**ErrorHandler Class Target (FQCN):** "Plan2net\Sierrha\Error\StatusNotFoundHandler"
 **Show Content from Page on Not Found:** TYPO3 page or external URL
 
 ### 403 "forbidden"
 
 On tab "Error Handling" create a new handler.
 
-**HTTP Error Status Code:** "403"  
+**HTTP Error Status Code:** "403"
 **How to handle Errors:** "PHP Class"
 
 Save the configuration.
 
-**ErrorHandler Class Target (FQCN):** "Plan2net\Sierrha\Error\StatusForbiddenHandler"  
-**Login Page:** TYPO3 page or external URL  
-**Show Content from Page on Missing Permissions:** TYPO3 page or external URL  
+**ErrorHandler Class Target (FQCN):** "Plan2net\Sierrha\Error\StatusForbiddenHandler"
+**Login Page:** TYPO3 page or external URL
+**Show Content from Page on Missing Permissions:** TYPO3 page or external URL
 **Return Parameter for Login Page URL:** URL query parameter of the login page without leading ? or &
 
 _Note:_ The parameter for the login page used by the extension "felogin" is `return_url=###URL###`.
