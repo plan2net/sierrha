@@ -60,5 +60,10 @@
       "typo3/class-alias-loader": true,
       "typo3/cms-composer-installers": true
     }
+  },
+  "scripts": {
+    "test": [
+      "./vendor/bin/phpunit --config Build/UnitTests.xml"
+    ]
   }
 }

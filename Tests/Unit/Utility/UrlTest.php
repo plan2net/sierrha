@@ -2,7 +2,10 @@
 
 namespace Plan2net\Sierrha\Tests\Error;
 
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\Exception;
 use Plan2net\Sierrha\Utility\Url;
+use TYPO3\CMS\Core\Http\Client\GuzzleClientFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -12,28 +15,29 @@ use TYPO3\CMS\Core\Controller\ErrorPageController;
 
 class UrlTest extends UnitTestCase
 {
-
     protected const ERROR_PAGE_CONTROLLER_CONTENT = 'FALLBACK ERROR TEXT';
 
     /**
      * System Under Test
-     *
-     * @var Url
      */
-    protected $sut;
+    protected Url $sut;
 
-    /** @var LanguageService */
-    protected $languageServiceStub;
+    protected LanguageService $languageServiceStub;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->sut = new Url();
 
         $this->languageServiceStub = $this->createMock(LanguageService::class);
         $this->languageServiceStub->method('sL')->willReturn('lorem ipsum');
+
+        parent::setUp();
     }
 
-    protected function setupErrorPageControllerStub()
+    protected function setupErrorPageControllerStub(): void
     {
         $errorPageControllerStub = $this->getMockBuilder(ErrorPageController::class)
             ->disableOriginalConstructor()
@@ -43,12 +47,28 @@ class UrlTest extends UnitTestCase
         GeneralUtility::addInstance(ErrorPageController::class, $errorPageControllerStub);
     }
 
-    protected function setupRequestFactoryStub($response)
+    protected function setupRequestFactoryStub($response): void
     {
+        // Create a stub for GuzzleClientFactory
+        $guzzleClientStub = $this->getMockBuilder(\GuzzleHttp\Client::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $guzzleClientStub->method('request')
+            ->willReturn($response);
+
+        $guzzleFactoryStub = $this->getMockBuilder(GuzzleClientFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $guzzleFactoryStub->method('getClient')
+            ->willReturn($guzzleClientStub);
+
+        // Now create the RequestFactory stub with the required dependency
         $requestFactoryStub = $this->getMockBuilder(RequestFactory::class)
+            ->setConstructorArgs([$guzzleFactoryStub])
             ->getMock();
         $requestFactoryStub->method('request')
             ->willReturn($response);
+
         GeneralUtility::addInstance(RequestFactory::class, $requestFactoryStub);
     }
 
@@ -61,37 +81,33 @@ class UrlTest extends UnitTestCase
         return $stream;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function httpErrorOnFetchingUrlIsDetected()
     {
         $this->setupErrorPageControllerStub();
 
+        // Anything but 200
         $this->setupRequestFactoryStub(
             new Response($this->buildResponseBody('SERVER ERROR TEXT'), 500)
-        ); // anything but 200
+        );
 
         $result = $this->sut->fetchWithFallback('http://foo.bar/', $this->languageServiceStub, '');
         $this->assertEquals(self::ERROR_PAGE_CONTROLLER_CONTENT, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyContentOfFetchedUrlIsDetected()
     {
         $this->setupErrorPageControllerStub();
 
-        $this->setupRequestFactoryStub(new Response()); // will return an empty string
+        // Will return an empty string
+        $this->setupRequestFactoryStub(new Response());
 
         $result = $this->sut->fetchWithFallback('http://foo.bar/', $this->languageServiceStub, '');
         $this->assertEquals(self::ERROR_PAGE_CONTROLLER_CONTENT, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unusableContentOfFetchedUrlIsDetected()
     {
         $this->setupErrorPageControllerStub();
@@ -102,9 +118,7 @@ class UrlTest extends UnitTestCase
         $this->assertEquals(self::ERROR_PAGE_CONTROLLER_CONTENT, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function usableContentOfFetchedUrlIsReturned()
     {
         $errorPageContent = 'CUSTOM ERROR PAGE TEXT';

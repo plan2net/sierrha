@@ -6,3 +6,5 @@ Thumbs.db
 /composer.lock
 /public
 /vendor
+/Build/.phpunit.cache
+/Build/.phpunit.result.cache
