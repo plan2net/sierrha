@@ -8,11 +8,11 @@ $EM_CONF[$_EXTKEY] = [
     'author_email' => 'office@plan2.net',
     'author_company' => 'plan2net GmbH',
     'state' => 'stable',
-    'version' => '0.4.2',
+    'version' => '0.4.3',
     'constraints' => [
         'depends' => [
-            'backend' => '9.5.0 - 12.4.99',
-            'frontend' => '9.5.0 - 12.4.99',
+            'backend' => '13.4.0 - 13.4.99',
+            'frontend' => '13.4.0 - 13.4.99',
         ],
         'conflicts' => [],
         'suggests' => [],

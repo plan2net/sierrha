@@ -3,3 +3,6 @@
 Desktop.ini
 Thumbs.db
 *~
+/composer.lock
+/public
+/vendor

@@ -33,12 +33,12 @@
     "source": "https://github.com/plan2net/sierrha/"
   },
   "require": {
-    "php": "^7.2 || ^8.1",
-    "typo3/cms-backend": "^9.5 || ^10.4 || ^11.5 || ^12.4",
-    "typo3/cms-frontend": "^9.5 || ^10.4 || ^11.5 || ^12.4"
+    "php": ">=8.2",
+    "typo3/cms-backend": "^13.4",
+    "typo3/cms-frontend": "^13.4"
   },
   "require-dev": {
-    "typo3/testing-framework": "^4.0 || ^6.0"
+    "typo3/testing-framework": "*"
   },
   "autoload": {
     "psr-4": {
@@ -53,6 +53,12 @@
   "extra": {
     "typo3/cms": {
       "extension-key": "sierrha"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "typo3/class-alias-loader": true,
+      "typo3/cms-composer-installers": true
     }
   }
 }
