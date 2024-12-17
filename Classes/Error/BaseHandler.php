@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Plan2net\Sierrha\Error;
 
 /*
- * Copyright 2019-2022 plan2net GmbH
+ * Copyright 2019-2024 plan2net GmbH
  *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
@@ -26,11 +26,8 @@ use TYPO3\CMS\Core\Http\ImmediateResponseException;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-/**
- * A foundation class for error handlers.
- */
 abstract class BaseHandler implements PageErrorHandlerInterface
 {
     protected const CACHE_IDENTIFIER = 'pages';
@@ -38,32 +35,20 @@ abstract class BaseHandler implements PageErrorHandlerInterface
     protected const KEY_PREFIX = ''; // for cache and translations
 
     /**
-     * @var int
+     * @var array<array-key, mixed>
      */
-    protected $statusCode = 0;
+    protected array $extensionConfiguration;
 
-    /**
-     * @var mixed[]
-     */
-    protected $handlerConfiguration = [];
+    protected string $typo3Language;
 
-    /**
-     * @var array
-     */
-    protected $extensionConfiguration = [];
-
-    /**
-     * @var string
-     */
-    protected $typo3Language = 'default';
-
-    public function __construct(int $statusCode, array $handlerConfiguration)
-    {
-        $this->statusCode = $statusCode;
-        $this->handlerConfiguration = $handlerConfiguration;
+    public function __construct(
+        protected readonly int $statusCode,
+        protected readonly array $handlerConfiguration
+    ) {
+        $this->typo3Language = 'default';
         try {
             $this->extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('sierrha');
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             // @todo log configuration error
             $this->extensionConfiguration = [];
         }
@@ -79,7 +64,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
             $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache(static::CACHE_IDENTIFIER);
             $cacheIdentifier = 'sierrha_' . static::KEY_PREFIX . '_' . md5($url);
             $cacheContent = $cache->get($cacheIdentifier);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $cache = null;
             $cacheContent = false;
             // @todo add logging
@@ -95,7 +80,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
                 /** @todo allow for custom cache lifetime */
                 $cacheTags = ['sierrha'];
                 if ($pageUid > 0) {
-                    // cache tag "pageId_" ensures that cache is purged when content of 404 page changes
+                    // Cache tag "pageId_" ensures that cache is purged when content of 404 page changes
                     $cacheTags[] = 'pageId_' . $pageUid;
                 }
                 $cache->set($cacheIdentifier, $content, $cacheTags, static::CACHE_TIME);
@@ -131,7 +116,7 @@ abstract class BaseHandler implements PageErrorHandlerInterface
         $content = $controller->errorAction(
             $title,
             $message,
-            AbstractMessage::ERROR
+            ContextualFeedbackSeverity::ERROR->value,
         );
         if ($exitImmediately) {
             throw new ImmediateResponseException(new HtmlResponse($content, 500));

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Plan2net\Sierrha\Utility;
 
 /*
- * Copyright 2019-2022 plan2net GmbH
+ * Copyright 2019-2024 plan2net GmbH
  *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
@@ -17,6 +17,7 @@ namespace Plan2net\Sierrha\Utility;
 
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Controller\ErrorPageController;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Localization\LanguageService;
@@ -28,12 +29,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * A utility for URL handling.
  */
-class Url
+readonly class Url
 {
     /**
      * Resolve TYPO3 style URL into real world URL, replace language markers for external URL.
      *
      * @throws \TYPO3\CMS\Core\Routing\InvalidRouteArgumentsException
+     * @throws SiteNotFoundException
      */
     public function resolve(ServerRequestInterface $request, string $typoLinkUrl): array
     {
@@ -57,7 +59,7 @@ class Url
         $language = $request->getAttribute('language');
         if ($language instanceof SiteLanguage) {
             $value['typo3Language'] = $language->getTypo3Language();
-            $languageCodes = [$language->getTwoLetterIsoCode(), $language->getHreflang()];
+            $languageCodes = [$language->getLocale()->getLanguageCode(), $language->getHreflang()];
         }
 
         if ($urlParams['type'] === 'url') {
@@ -127,7 +129,7 @@ class Url
             } else {
                 // @todo add error logging
             }
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             // @todo add error logging
         }
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Plan2net\Sierrha\Error;
 
 /*
- * Copyright 2019-2022 plan2net GmbH
+ * Copyright 2019-2024 plan2net GmbH
  *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
@@ -22,7 +22,7 @@ use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * An error handler that shows content from a page expect for web resource requests (eg CSS).
+ * An error handler that shows content from a page expect for web resource requests (e.g. CSS).
  */
 class StatusNotFoundHandler extends BaseHandler
 {
@@ -54,7 +54,7 @@ class StatusNotFoundHandler extends BaseHandler
                 );
             }
 
-            // don't show pretty error page for web resources
+            // Don't show pretty error page for web resources
             if (!empty($this->extensionConfiguration['resourceExtensionRegexp'])
                 && preg_match(
                     '/\.(?:' . $this->extensionConfiguration['resourceExtensionRegexp'] . ')$/',

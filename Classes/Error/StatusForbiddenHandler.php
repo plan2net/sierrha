@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Plan2net\Sierrha\Error;
 
 /*
- * Copyright 2019-2022 plan2net GmbH
+ * Copyright 2019-2024 plan2net GmbH
  *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
@@ -45,13 +45,13 @@ class StatusForbiddenHandler extends BaseHandler
             return $this->handlePageGroupAccessDenial($request, $message);
         }
 
-        // trigger "page not found"
+        // Trigger "page not found"
         $response = GeneralUtility::makeInstance(ErrorController::class)->pageNotFoundAction(
             $request,
             $message,
             $reasons
         );
-        // stop further processing to make sure TYPO3 returns 403 and not 404
+        // Stop further processing to make sure TYPO3 returns 403 and not 404
         throw new ImmediateResponseException($response);
     }
 
