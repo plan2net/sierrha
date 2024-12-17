@@ -1,12 +1,28 @@
 # Ṣıẹrrḥa - Site Error Handler
 
-A set of error handlers that extends TYPO3's default site error handling.
+Enhanced error handlers for TYPO3's site error handling system.
 
-## Available Handlers
+## Features
+
+### 404 Not Found Handler
+
+- Displays content from a configurable TYPO3 page or external URL
+- Falls back to standard TYPO3 error layout if content is unavailable
+- Optimized handling for web resources (CSS, JS, fonts, etc.)
+- Bandwidth-saving responses for static resources
+
+### 403 Forbidden Handler
+
+- Redirects unauthenticated users to a configurable login page
+- Optional fallback page for users with insufficient permissions
+- Configurable return URL parameter with marker support
+- Falls back to 404 handler in other cases
+
+## Handlers
 
 ### Page Not Found (HTTP Status 404)
 
-Shows content from a page or external URL.
+Displays content from a page or external URL.
 
 If the resource is unavailable or the content is empty, a message in the standard TYPO3 error layout is shown.
 
@@ -29,35 +45,26 @@ Redirects to a login URL if access to page without a session is not permitted.
 If the user is already logged in, but has no access because of missing group rights he will be optionally redirected to
 a fallback page ("Show Content from Page on Missing Permissions", see [Site Configuration][site]).
 
-In any other case a 404 "not found" error is triggered. TYPO3 will invoke the configured error handler.
-
-## Caching
-
-The error pages are cached in the page cache of TYPO3. If TYPO3 pages are configured (and not external URLs)
-then the cache is invalidated automatically if the page content changes.
+In any other case a 404 "Not found" error is triggered. TYPO3 will invoke the configured error handler.
 
 ## Requirements
 
-* TYPO3 9 LTS, 10 LTS, 11 LTS, 12 LTS
+* TYPO3 13 LTS, PHP 8.2+
 * 404: A page/URL that contains a human-readable "page not found" message
 * 403: A URL that performs a login and a redirect to a supplied URL (eg. extension "felogin")
 * the web server must be able to reach itself under the configured domain
 
 ## Installation
 
-Add via composer.json:
+Install via composer
 
+```sh
+composer require plan2net/sierrha
 ```
-"require": {
-  "plan2net/sierrha": "*"
-}
-```
-
-Install and activate the extension in the Extension manager.
 
 ## Extension Manager Configuration
 
-_Regular Expression For Resource File Extensions_:
+_Regular Expression for Resource File Extensions_:
 
 This is the default regular expression.
 
@@ -80,7 +87,7 @@ On tab "Error Handling" create a new handler.
 
 Save the configuration.
 
-**ErrorHandler Class Target (FQCN):** "Plan2net\Sierrha\Error\StatusNotFoundHandler"
+**ErrorHandler Class Target (FQCN):** `Plan2net\Sierrha\Error\StatusNotFoundHandler`
 **Show Content from Page on Not Found:** TYPO3 page or external URL
 
 ### 403 "forbidden"
@@ -92,7 +99,7 @@ On tab "Error Handling" create a new handler.
 
 Save the configuration.
 
-**ErrorHandler Class Target (FQCN):** "Plan2net\Sierrha\Error\StatusForbiddenHandler"
+**ErrorHandler Class Target (FQCN):** `Plan2net\Sierrha\Error\StatusForbiddenHandler`
 **Login Page:** TYPO3 page or external URL
 **Show Content from Page on Missing Permissions:** TYPO3 page or external URL
 **Return Parameter for Login Page URL:** URL query parameter of the login page without leading ? or &
@@ -110,8 +117,13 @@ Marker | Description
 ###ISO_639-1### | current language as two letter ISO code (ISO 639-1)
 ###IETF_BCP47### | current language as IETF language tag (IETF BCP 47, RFC 5646/4646/3066/1766) aka "hreflang"
 
+## Caching
+
+Error pages are cached in TYPO3's page cache. For TYPO3 pages (not external URLs), the cache is automatically invalidated when page content changes.
+
 ## Changelog
 
+* 0.4.3 TYPO3 CMS 13 and PHP 8.2 compatible release
 * 0.4.2 PHP 8.1 compatible release
 * 0.4.1 Prevent exception when language not available from request
 * 0.4.0
